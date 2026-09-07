@@ -1307,7 +1307,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
           <div class="toolbar-left">
             <div class="search-input-wrap">
               <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <input type="text" class="form-input" data-table-filter="expiryTable" placeholder="Cari nama barang atau batch...">
+              <input type="text" class="form-input" data-table-filter="expiryTable" placeholder="Cari nama barang">
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: var(--text-xs); font-weight: 500;">Filter Periode:</span>
@@ -1326,7 +1326,6 @@ html.sidebar-collapsed .sidebar .user-snippet {
             <thead>
               <tr>
                 <th>Nama Produk</th>
-                <th>No. Batch</th>
                 <th>Tanggal Kedaluwarsa</th>
                 <th class="th-number">Jumlah Unit</th>
                 <th>Lokasi Rak</th>
@@ -1340,7 +1339,6 @@ html.sidebar-collapsed .sidebar .user-snippet {
                   <div class="font-semibold">Yoghurt Rasa Blueberry 250ml</div>
                   <div class="font-mono td-muted">SKU-8992014</div>
                 </td>
-                <td class="font-mono">B-9022</td>
                 <td class="font-bold">10 September 2026</td>
                 <td class="td-number font-bold">12 Botol</td>
                 <td>Zona A / Rak 04 / Bin 01</td>
@@ -1348,7 +1346,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 <td class="text-right">
                   <div style="display: inline-flex; gap: 6px;">
                     <button class="btn btn-secondary btn-sm" onclick="alert('Barang berhasil ditarik dari rak display.')">Tarik dari Rak</button>
-                    <a href="return-detail.html" class="btn btn-secondary btn-sm">Ajukan Retur</a>
+                    <a href="return-detail.html?source=expiry&supplier=PT%20Mayora%20Indah%20Tbk&sku=SKU-8992014&name=Yoghurt%20Rasa%20Blueberry%20250ml&qty=12&unit=Botol&reason=Mendekati%20Kedaluwarsa&price=9500&notes=Barang%20kritis%20mendekati%20kedaluwarsa%20(6%20hari%20lagi),%20diajukan%20retur%20ke%20supplier" class="btn btn-secondary btn-sm">Ajukan Retur</a>
                   </div>
                 </td>
               </tr>
@@ -1358,7 +1356,6 @@ html.sidebar-collapsed .sidebar .user-snippet {
                   <div class="font-semibold">Roti Gandum Kismis 300g</div>
                   <div class="font-mono td-muted">SKU-8993041</div>
                 </td>
-                <td class="font-mono">B-8871</td>
                 <td class="font-bold">03 September 2026</td>
                 <td class="td-number font-bold">5 Bungkus</td>
                 <td>Zona A / Rak 01 / Bin 02</td>
@@ -1366,6 +1363,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 <td class="text-right">
                   <div style="display: inline-flex; gap: 6px;">
                     <button class="btn btn-danger btn-sm" onclick="alert('Berita acara pembuangan / pemusnahan barang berhasil dibuat.')">Buang / Musnahkan</button>
+                    <a href="return-detail.html?source=expiry&supplier=CV%20Sumber%20Berkah%20Sembako&sku=SKU-8993041&name=Roti%20Gandum%20Kismis%20300g&qty=5&unit=Pcs&reason=Lewat%20Kedaluwarsa&price=12000&notes=Barang%20telah%20lewat%20masa%20kedaluwarsa,%20klaim%20retur%20pemusnahan%20ke%20distributor" class="btn btn-secondary btn-sm">Ajukan Retur</a>
                   </div>
                 </td>
               </tr>
@@ -1375,7 +1373,6 @@ html.sidebar-collapsed .sidebar .user-snippet {
                   <div class="font-semibold">Susu UHT Cokelat 1L</div>
                   <div class="font-mono td-muted">SKU-8992001</div>
                 </td>
-                <td class="font-mono">B-9104</td>
                 <td>28 September 2026</td>
                 <td class="td-number font-semibold">18 Karton</td>
                 <td>Zona B / Rak 02 / Bin 01</td>
@@ -1383,7 +1380,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 <td class="text-right">
                   <div style="display: inline-flex; gap: 6px;">
                     <button class="btn btn-secondary btn-sm" onclick="alert('Barang diberi label diskon cepat jual.')">Tarik dari Rak</button>
-                    <a href="return-detail.html" class="btn btn-secondary btn-sm">Ajukan Retur</a>
+                    <a href="return-detail.html?source=expiry&supplier=PT%20Mayora%20Indah%20Tbk&sku=SKU-8992001&name=Susu%20UHT%20Cokelat%201L&qty=18&unit=Dus%20(40%20pcs)&reason=Mendekati%20Kedaluwarsa&price=16500&notes=Stok%20susu%20mendekati%20kedaluwarsa%2024%20hari%20lagi,%20diajukan%20retur%20konsinyasi" class="btn btn-secondary btn-sm">Ajukan Retur</a>
                   </div>
                 </td>
               </tr>
@@ -1393,7 +1390,6 @@ html.sidebar-collapsed .sidebar .user-snippet {
                   <div class="font-semibold">Keju Cheddar Olahan 160g</div>
                   <div class="font-mono td-muted">SKU-8993088</div>
                 </td>
-                <td class="font-mono">B-8955</td>
                 <td>15 Oktober 2026</td>
                 <td class="td-number font-semibold">24 Pcs</td>
                 <td>Zona A / Rak 03 / Bin 02</td>

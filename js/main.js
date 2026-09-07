@@ -155,7 +155,418 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
+
+  // ================= UNIVERSAL DROPDOWN BUTTONS & ANIMATION =================
+  initCustomSelects();
+
+  // Re-run on dynamic DOM mutations (modals, new rows, dynamic forms)
+  if (window.MutationObserver) {
+    const selectObserver = new MutationObserver((mutations) => {
+      let shouldInit = false;
+      for (const m of mutations) {
+        if (m.addedNodes && m.addedNodes.length > 0) {
+          for (const node of m.addedNodes) {
+            if (node.nodeType === 1 && (node.matches('select.form-select') || (node.querySelector && node.querySelector('select.form-select')))) {
+              shouldInit = true;
+              break;
+            }
+          }
+        }
+        if (shouldInit) break;
+      }
+      if (shouldInit) {
+        initCustomSelects();
+      }
+    });
+    selectObserver.observe(document.body, { childList: true, subtree: true });
+  }
 });
+
+// Dropdown styles injection (guarantees styling parity across all pages)
+function injectGlobalDropdownStyles() {
+  if (document.getElementById('global-dropdown-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'global-dropdown-styles';
+  style.textContent = `
+    .searchable-select-wrap,
+    .custom-select-wrap {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      vertical-align: middle;
+      box-sizing: border-box;
+    }
+
+    .custom-select-wrap.is-inline {
+      width: auto;
+      min-width: 140px;
+    }
+
+    .custom-select-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 9px 34px 9px 12px;
+      background-color: var(--bg-surface, #ffffff);
+      border: 1px solid var(--border-subtle, #e4e4e7);
+      border-radius: var(--radius-md, 6px);
+      font-size: var(--text-sm, 13.5px);
+      color: var(--color-black, #09090b);
+      cursor: pointer;
+      user-select: none;
+      transition: all var(--transition-fast, 150ms);
+      white-space: nowrap;
+      box-sizing: border-box;
+    }
+
+    .custom-select-wrap.is-compact .custom-select-trigger {
+      padding: 6px 30px 6px 10px;
+      font-size: var(--text-xs, 12px);
+      border-radius: var(--radius-sm, 4px);
+    }
+
+    .custom-select-trigger:focus,
+    .custom-select-wrap.is-open .custom-select-trigger {
+      outline: none;
+      border-color: var(--color-black, #09090b);
+      box-shadow: 0 0 0 1px var(--color-black, #09090b);
+    }
+
+    .custom-select-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-right: 4px;
+    }
+
+    .input-dropdown-btn {
+      position: absolute;
+      right: 1px;
+      top: 1px;
+      bottom: 1px;
+      width: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--color-gray-500, #71717a);
+      cursor: pointer;
+      border-radius: 0 var(--radius-sm, 4px) var(--radius-sm, 4px) 0;
+      transition: all var(--transition-fast, 150ms);
+    }
+
+    .custom-select-wrap.is-compact .input-dropdown-btn {
+      width: 26px;
+    }
+
+    .input-dropdown-btn:hover,
+    .custom-select-wrap:hover .input-dropdown-btn {
+      color: var(--color-black, #09090b);
+      background-color: var(--color-gray-100, #f4f4f5);
+    }
+
+    .input-dropdown-btn svg,
+    .dropdown-btn svg,
+    .btn-dropdown svg {
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .searchable-select-wrap.is-open .input-dropdown-btn svg,
+    .custom-select-wrap.is-open .input-dropdown-btn svg,
+    .dropdown-btn.is-open svg,
+    .btn-dropdown.is-open svg {
+      transform: rotate(180deg);
+    }
+
+    @keyframes dropdownSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes dropdownSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .custom-dropdown-portal {
+      position: fixed;
+      background: var(--bg-surface, #ffffff);
+      border: 1px solid var(--border-medium, #d4d4d8);
+      border-radius: var(--radius-md, 6px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16), 0 2px 6px rgba(0, 0, 0, 0.06);
+      z-index: 999999;
+      max-height: 250px;
+      overflow-y: auto;
+      animation: dropdownSlideDown 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      box-sizing: border-box;
+    }
+
+    .custom-dropdown-portal.open-upward {
+      animation: dropdownSlideUp 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .custom-dropdown-item {
+      padding: 8px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border-subtle, #f4f4f5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: var(--text-sm, 13.5px);
+      color: var(--color-black, #09090b);
+      transition: background 0.1s;
+    }
+
+    .custom-dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .custom-dropdown-item:hover {
+      background-color: var(--color-gray-100, #f4f4f5);
+    }
+
+    .custom-dropdown-item.is-selected {
+      font-weight: 600;
+      background-color: var(--color-gray-50, #fafafa);
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+let activeGlobalDropdown = null; // { wrap, trigger, select }
+
+function getGlobalDropdownPortal() {
+  let portal = document.getElementById('globalDropdownPortal');
+  if (!portal) {
+    const poPortal = document.getElementById('poDropdownPortal');
+    if (poPortal) {
+      portal = poPortal;
+    } else {
+      portal = document.createElement('div');
+      portal.id = 'globalDropdownPortal';
+      portal.className = 'custom-dropdown-portal';
+      portal.style.display = 'none';
+      document.body.appendChild(portal);
+    }
+  }
+  return portal;
+}
+
+function closeGlobalDropdown() {
+  const portal = getGlobalDropdownPortal();
+  if (portal) {
+    portal.style.display = 'none';
+    portal.innerHTML = '';
+  }
+  document.querySelectorAll('.custom-select-wrap.is-open').forEach(w => {
+    w.classList.remove('is-open');
+    const trigger = w.querySelector('.custom-select-trigger');
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+  });
+  activeGlobalDropdown = null;
+}
+
+function positionGlobalDropdown() {
+  if (!activeGlobalDropdown) return;
+  const portal = getGlobalDropdownPortal();
+  if (!portal || portal.style.display === 'none') return;
+
+  const trigger = activeGlobalDropdown.trigger;
+  const rect = trigger.getBoundingClientRect();
+
+  if (rect.bottom < 0 || rect.top > window.innerHeight) {
+    closeGlobalDropdown();
+    return;
+  }
+
+  const width = Math.max(rect.width, 160);
+  portal.style.width = width + 'px';
+  portal.style.left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 16)) + 'px';
+
+  const estimatedHeight = 220;
+  const spaceBelow = window.innerHeight - rect.bottom;
+  const spaceAbove = rect.top;
+
+  if (spaceBelow < estimatedHeight && spaceAbove > spaceBelow) {
+    portal.classList.add('open-upward');
+    portal.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
+    portal.style.top = 'auto';
+  } else {
+    portal.classList.remove('open-upward');
+    portal.style.top = (rect.bottom + 4) + 'px';
+    portal.style.bottom = 'auto';
+  }
+}
+
+// Global window event handlers for custom dropdown
+window.addEventListener('scroll', () => {
+  if (activeGlobalDropdown) {
+    positionGlobalDropdown();
+  }
+}, true);
+
+window.addEventListener('resize', () => {
+  if (activeGlobalDropdown) {
+    positionGlobalDropdown();
+  }
+});
+
+document.addEventListener('click', (e) => {
+  const portal = getGlobalDropdownPortal();
+  if (portal && portal.contains(e.target)) return;
+  if (!e.target.closest('.custom-select-wrap')) {
+    closeGlobalDropdown();
+  }
+});
+
+window.initCustomSelects = function(root = document) {
+  injectGlobalDropdownStyles();
+
+  const selects = root.querySelectorAll('select.form-select');
+  selects.forEach(select => {
+    if (select.dataset.customSelectInit === 'true') {
+      const existingWrap = select.parentNode ? select.parentNode.querySelector(`.custom-select-wrap[data-for-select="${select.id}"]`) : null;
+      if (existingWrap) {
+        const lbl = existingWrap.querySelector('.custom-select-label');
+        const curOpt = select.options[select.selectedIndex];
+        if (lbl && curOpt) lbl.textContent = curOpt.text;
+      }
+      return;
+    }
+
+    if (select.classList.contains('no-custom-select')) return;
+
+    select.dataset.customSelectInit = 'true';
+    if (!select.id) {
+      select.id = 'sel_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    const isAutoWidth = select.style.width === 'auto' || select.closest('.toolbar-left, .toolbar-right, .header-right');
+    const isCompact = (select.style.padding && (select.style.padding.includes('7px') || select.style.padding.includes('6px') || select.style.padding.includes('5px'))) || select.classList.contains('form-select-sm');
+
+    select.style.position = 'absolute';
+    select.style.opacity = '0';
+    select.style.pointerEvents = 'none';
+    select.style.width = '1px';
+    select.style.height = '1px';
+    select.style.margin = '-1px';
+    select.style.clip = 'rect(0,0,0,0)';
+    select.setAttribute('tabindex', '-1');
+
+    const wrap = document.createElement('div');
+    wrap.className = 'custom-select-wrap' + (isAutoWidth ? ' is-inline' : '') + (isCompact ? ' is-compact' : '');
+    wrap.dataset.forSelect = select.id;
+
+    const selectedOption = select.options[select.selectedIndex] || select.options[0];
+    const initialText = selectedOption ? selectedOption.text : 'Pilih...';
+
+    wrap.innerHTML = `
+      <div class="custom-select-trigger" tabindex="0" role="combobox" aria-expanded="false" title="${initialText}">
+        <span class="custom-select-label">${initialText}</span>
+      </div>
+      <button type="button" class="input-dropdown-btn" title="Buka Pilihan" tabindex="-1">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+    `;
+
+    const trigger = wrap.querySelector('.custom-select-trigger');
+    const label = wrap.querySelector('.custom-select-label');
+    const btn = wrap.querySelector('.input-dropdown-btn');
+
+    select.addEventListener('change', () => {
+      const opt = select.options[select.selectedIndex];
+      if (opt) {
+        label.textContent = opt.text;
+        trigger.title = opt.text;
+      }
+    });
+
+    function toggleDropdown(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (wrap.classList.contains('is-open')) {
+        closeGlobalDropdown();
+      } else {
+        closeGlobalDropdown();
+        if (typeof closeAllDropdowns === 'function') {
+          closeAllDropdowns();
+        }
+
+        wrap.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
+        activeGlobalDropdown = { wrap, trigger, select };
+
+        const portal = getGlobalDropdownPortal();
+        portal.innerHTML = '';
+
+        Array.from(select.options).forEach((opt, idx) => {
+          const item = document.createElement('div');
+          const isSelected = idx === select.selectedIndex;
+          item.className = 'custom-dropdown-item' + (isSelected ? ' is-selected' : '');
+          if (opt.disabled) {
+            item.style.opacity = '0.5';
+            item.style.cursor = 'not-allowed';
+          }
+          item.innerHTML = `
+            <span>${opt.text}</span>
+            ${isSelected ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
+          `;
+
+          if (!opt.disabled) {
+            item.onclick = (eItem) => {
+              eItem.stopPropagation();
+              select.selectedIndex = idx;
+              label.textContent = opt.text;
+              trigger.title = opt.text;
+              closeGlobalDropdown();
+
+              select.dispatchEvent(new Event('change', { bubbles: true }));
+              trigger.focus();
+            };
+          }
+
+          portal.appendChild(item);
+        });
+
+        portal.style.display = 'block';
+        portal.style.animation = 'none';
+        portal.offsetHeight;
+        portal.style.animation = '';
+
+        positionGlobalDropdown();
+      }
+    }
+
+    trigger.addEventListener('click', toggleDropdown);
+    btn.addEventListener('click', toggleDropdown);
+
+    trigger.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        toggleDropdown(e);
+      } else if (e.key === 'Escape') {
+        closeGlobalDropdown();
+      }
+    });
+
+    select.parentNode.insertBefore(wrap, select.nextSibling);
+  });
+};
 
 // Centralized Store for Master Data (Categories, Units, Products, Purchase Orders)
 window.PosStore = {
@@ -191,6 +602,51 @@ window.PosStore = {
     { id: 'PO-2026-0899', supplier: 'CV Sumber Berkah Sembako', pic: 'H. Sudirman (0812-3456-7890)', date: '2026-08-28', eta: '2026-08-30', itemsCount: 4, totalQty: '120 Sak (4 SKU)', totalAmount: 18250000, status: 'Selesai Verifikasi', destination: 'Gudang Utama - Toko Berkah Jaya', paymentTerm: 'COD / Tunai', notes: 'Verifikasi fisik telah lengkap.' },
     { id: 'PO-2026-0895', supplier: 'PT Wings Surya', pic: 'Bpk. Gunawan (031) 843-2211', date: '2026-08-25', eta: '2026-08-28', itemsCount: 5, totalQty: '80 Karton (5 SKU)', totalAmount: 9000000, status: 'Selesai Verifikasi', destination: 'Gudang Utama - Toko Berkah Jaya', paymentTerm: 'Tempo 30 Hari', notes: 'Semua barang diterima dalam kondisi baik.' },
     { id: 'PO-2026-0903', supplier: 'PT Unilever Indonesia', pic: 'Bpk. Adrian (021) 8082-7000', date: '2026-09-04', eta: '2026-09-08', itemsCount: 3, totalQty: '25 Dus (3 SKU)', totalAmount: 7500000, status: 'Draf', destination: 'Gudang Utama - Toko Berkah Jaya', paymentTerm: 'Tempo 30 Hari', notes: 'Draf pesanan bulanan.' }
+  ],
+
+  defaultReturns: [
+    {
+      id: 'RET-2026-0901',
+      supplier: 'PT Indofood Sukses Makmur',
+      pic: 'Bpk. Haryanto (Logistik Distributor)',
+      phone: '(021) 522-8800 ext. 201',
+      poRef: 'PO-2026-0901',
+      date: '2026-09-04',
+      status: 'Diajukan',
+      settlement: 'Penggantian Barang Fisik Baru',
+      notes: 'Kemasan pouch bocor di bagian seal bawah saat serah terima barang PO-2026-0901. Sopir ekspedisi supplier telah menandatangani bukti catatan ketidaksesuaian barang.',
+      items: [
+        { sku: 'SKU-8991002', name: 'Minyak Goreng Refill 2L', qty: 1, unit: 'Pouch (2L)', reason: 'Kemasan Bocor / Rusak', buyPrice: 30500, subtotal: 30500 }
+      ]
+    },
+    {
+      id: 'RET-2026-0888',
+      supplier: 'PT Mayora Indah Tbk',
+      pic: 'Ibu Rina Melati (Distribusi Cabang)',
+      phone: '(021) 565-3321',
+      poRef: 'PO-2026-0850',
+      date: '2026-08-28',
+      status: 'Dikonfirmasi Supplier',
+      settlement: 'Penggantian Barang Fisik Baru',
+      notes: 'Kemasan kaleng biskuit penyok parah di sudut bawah carton box saat bongkar muat.',
+      items: [
+        { sku: 'SKU-8992001', name: 'Susu UHT Cokelat 1L', qty: 4, unit: 'Dus (40 pcs)', reason: 'Cacat Pabrik', buyPrice: 16500, subtotal: 66000 }
+      ]
+    },
+    {
+      id: 'RET-2026-0870',
+      supplier: 'CV Sumber Berkah Sembako',
+      pic: 'H. Sudirman (Owner/Distributor)',
+      phone: '0812-3456-7890',
+      poRef: 'PO-2026-0822',
+      date: '2026-08-18',
+      status: 'Selesai',
+      settlement: 'Pemotongan Pembayaran / Nota Kredit',
+      notes: 'Karung beras robek saat serah terima. Diterbitkan nota kredit kompensasi faktur pengadaan.',
+      items: [
+        { sku: 'SKU-8991001', name: 'Beras Premium Ramos 5kg', qty: 2, unit: 'Sak / Karung (5kg)', reason: 'Kemasan Bocor / Rusak', buyPrice: 64250, subtotal: 128500 }
+      ]
+    }
   ],
 
   // Categories
@@ -300,6 +756,35 @@ window.PosStore = {
     let list = this.getPOs();
     list = list.map(p => p.id === id ? { ...p, status } : p);
     this.savePOs(list);
+    return list;
+  },
+
+  // Purchase Returns
+  getReturns() {
+    const raw = localStorage.getItem('pos_returns');
+    if (!raw) {
+      this.saveReturns(this.defaultReturns);
+      return [...this.defaultReturns];
+    }
+    try { return JSON.parse(raw); } catch (e) { return [...this.defaultReturns]; }
+  },
+  saveReturns(list) {
+    localStorage.setItem('pos_returns', JSON.stringify(list));
+  },
+  getReturnById(id) {
+    const list = this.getReturns();
+    return list.find(r => r.id === id) || null;
+  },
+  addReturn(returnDoc) {
+    const list = this.getReturns();
+    list.unshift(returnDoc);
+    this.saveReturns(list);
+    return list;
+  },
+  updateReturn(id, updated) {
+    let list = this.getReturns();
+    list = list.map(r => r.id === id ? { ...r, ...updated } : r);
+    this.saveReturns(list);
     return list;
   },
 

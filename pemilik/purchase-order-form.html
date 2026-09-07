@@ -1399,10 +1399,6 @@ tr.is-active-row {
           <svg class="nav-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
           <span>Data Supplier</span>
         </a>
-        <a href="supplier-contracts.html" class="nav-item">
-          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
-          <span>Kontrak Supplier</span>
-        </a>
 
         <div class="nav-section-title">Akun</div>
         <a href="profile.html" class="nav-item">
@@ -1454,7 +1450,7 @@ tr.is-active-row {
           <!-- CARD 1: INFORMASI UMUM PO & SUPPLIER -->
           <div class="card mb-4">
             <div class="card-header">
-              <span class="card-title">1. Informasi Dokumen &amp; Vendor Rekanan</span>
+              <span class="card-title">Informasi Dokumen &amp; Vendor Rekanan</span>
               <span class="badge badge-black">DOKUMEN BARU</span>
             </div>
             <div class="card-body">
@@ -1462,7 +1458,6 @@ tr.is-active-row {
                 <div class="form-group">
                   <label class="form-label">Nomor Purchase Order</label>
                   <input type="text" class="form-input font-mono" id="poNumberInput" value="PO-2026-0904" placeholder="Contoh: PO-2026-0904" required>
-                  <span class="form-hint">Dapat disesuaikan jika memiliki format penomoran khusus.</span>
                 </div>
 
                 <div class="form-group">
@@ -1509,7 +1504,7 @@ tr.is-active-row {
           <!-- CARD 2: DAFTAR BARANG YANG DIPESAN -->
           <div class="card mb-4" style="overflow: visible;">
             <div class="card-header">
-              <span class="card-title">2. Rincian Barang &amp; Qty Pemesanan</span>
+              <span class="card-title">Rincian Barang &amp; Qty Pemesanan</span>
              
             </div>
             <div class="table-container" style="border: none; border-radius: 0; overflow: visible;">
@@ -1725,7 +1720,7 @@ tr.is-active-row {
         portal.style.display = 'none';
         portal.innerHTML = '';
       }
-      document.querySelectorAll('.searchable-select-wrap').forEach(wrap => {
+      document.querySelectorAll('.searchable-select-wrap, .custom-select-wrap').forEach(wrap => {
         wrap.classList.remove('is-open');
       });
       document.querySelectorAll('#poItemsBody tr').forEach(tr => {

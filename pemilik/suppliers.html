@@ -1280,10 +1280,6 @@ html.sidebar-collapsed .sidebar .user-snippet {
           <svg class="nav-icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
           <span>Data Supplier</span>
         </a>
-        <a href="supplier-contracts.html" class="nav-item">
-          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
-          <span>Kontrak Supplier</span>
-        </a>
 
         <div class="nav-section-title">Akun</div>
         <a href="profile.html" class="nav-item">
@@ -1327,7 +1323,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
         <div class="page-header">
           <div>
             <h1 class="page-title">Daftar Rekanan Pemasok &amp; Supplier</h1>
-            <p class="page-subtitle">Kelola informasi vendor distributor, PIC pemasok resmi, dan status kontrak perjanjian dagang.</p>
+            <p class="page-subtitle">Kelola informasi vendor distributor, PIC pemasok resmi, dan status masa aktif kontrak dagang dalam satu tabel terpadu.</p>
           </div>
         </div>
 
@@ -1335,19 +1331,20 @@ html.sidebar-collapsed .sidebar .user-snippet {
           <div class="toolbar-left">
             <div class="search-input-wrap">
               <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <input type="text" class="form-input" data-table-filter="suppTable" placeholder="Cari nama supplier atau kontak...">
+              <input type="text" id="suppSearch" class="form-input" placeholder="Cari nama supplier atau kontak PIC...">
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: var(--text-xs); font-weight: 500;">Status Kontrak:</span>
-              <select class="form-select" style="width: auto; padding: 7px 10px;">
+              <select id="suppStatusFilter" class="form-select" style="width: auto; padding: 7px 10px;">
                 <option value="">Semua Status</option>
-                <option value="Aktif">Kontrak Aktif</option>
-                <option value="Akan Berakhir">Akan Berakhir</option>
+                <option value="AKTIF">Berjalan (Aktif)</option>
+                <option value="BERAKHIR < 30 HARI">Berakhir (&lt; 30 Hari)</option>
+                <option value="HABIS">Berakhir</option>
               </select>
             </div>
           </div>
           <div class="toolbar-right">
-            <span class="badge badge-gray">TOTAL: 4 VENDOR REKANAN</span>
+            <span class="badge badge-gray" id="vendorTotalBadge">TOTAL: 5 VENDOR REKANAN</span>
           </div>
         </div>
 
@@ -1364,7 +1361,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr data-status="AKTIF">
                 <td>
                   <div class="font-semibold">PT Indofood Sukses Makmur</div>
                   <div class="text-muted" style="font-size: 11px;">Jakarta Utara &bull; ID: SUP-001</div>
@@ -1375,14 +1372,14 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 <td><span class="badge badge-black">AKTIF (HINGGA DES 2026)</span></td>
                 <td class="text-right">
                   <div style="display: inline-flex; gap: 6px;">
-                    <a href="supplier-detail.html" class="btn btn-secondary btn-sm">Detail</a>
-                    <a href="supplier-contracts.html" class="btn btn-secondary btn-sm">Kontrak</a>
-                    <a href="supplier-form.html" class="btn btn-secondary btn-sm">Edit</a>
+                    <a href="supplier-detail.html?id=SUP-001" class="btn btn-secondary btn-sm">Detail</a>
+                    <a href="supplier-contract-detail.html?id=SUP-001" class="btn btn-secondary btn-sm">Kontrak</a>
+                    <a href="supplier-form.html?id=SUP-001" class="btn btn-secondary btn-sm">Edit</a>
                   </div>
                 </td>
               </tr>
 
-              <tr>
+              <tr data-status="AKTIF">
                 <td>
                   <div class="font-semibold">PT Mayora Indah Tbk</div>
                   <div class="text-muted" style="font-size: 11px;">Tangerang &bull; ID: SUP-002</div>
@@ -1393,14 +1390,14 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 <td><span class="badge badge-black">AKTIF (HINGGA NOV 2026)</span></td>
                 <td class="text-right">
                   <div style="display: inline-flex; gap: 6px;">
-                    <a href="supplier-detail.html" class="btn btn-secondary btn-sm">Detail</a>
-                    <a href="supplier-contracts.html" class="btn btn-secondary btn-sm">Kontrak</a>
-                    <a href="supplier-form.html" class="btn btn-secondary btn-sm">Edit</a>
+                    <a href="supplier-detail.html?id=SUP-002" class="btn btn-secondary btn-sm">Detail</a>
+                    <a href="supplier-contract-detail.html?id=SUP-002" class="btn btn-secondary btn-sm">Kontrak</a>
+                    <a href="supplier-form.html?id=SUP-002" class="btn btn-secondary btn-sm">Edit</a>
                   </div>
                 </td>
               </tr>
 
-              <tr>
+              <tr data-status="BERAKHIR < 30 HARI">
                 <td>
                   <div class="font-semibold">CV Sumber Berkah Sembako</div>
                   <div class="text-muted" style="font-size: 11px;">Bekasi &bull; ID: SUP-003</div>
@@ -1408,17 +1405,17 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 <td>Bpk. Ridwan Hakim</td>
                 <td>+62 811-9922-101</td>
                 <td>Beras &amp; Gula Curah</td>
-                <td><span class="badge badge-gray">BERAKHIR (30 HARI LAGI)</span></td>
+                <td><span class="badge badge-gray">BERAKHIR (&lt; 30 HARI LAGI)</span></td>
                 <td class="text-right">
                   <div style="display: inline-flex; gap: 6px;">
-                    <a href="supplier-detail.html" class="btn btn-secondary btn-sm">Detail</a>
-                    <a href="supplier-contracts.html" class="btn btn-secondary btn-sm">Kontrak</a>
-                    <a href="supplier-form.html" class="btn btn-secondary btn-sm">Edit</a>
+                    <a href="supplier-detail.html?id=SUP-003" class="btn btn-secondary btn-sm">Detail</a>
+                    <a href="supplier-contract-detail.html?id=SUP-003" class="btn btn-secondary btn-sm">Kontrak</a>
+                    <a href="supplier-form.html?id=SUP-003" class="btn btn-secondary btn-sm">Edit</a>
                   </div>
                 </td>
               </tr>
 
-              <tr>
+              <tr data-status="AKTIF">
                 <td>
                   <div class="font-semibold">PT Wings Surya</div>
                   <div class="text-muted" style="font-size: 11px;">Surabaya / Jakarta &bull; ID: SUP-004</div>
@@ -1429,9 +1426,27 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 <td><span class="badge badge-black">AKTIF (HINGGA JAN 2027)</span></td>
                 <td class="text-right">
                   <div style="display: inline-flex; gap: 6px;">
-                    <a href="supplier-detail.html" class="btn btn-secondary btn-sm">Detail</a>
-                    <a href="supplier-contracts.html" class="btn btn-secondary btn-sm">Kontrak</a>
-                    <a href="supplier-form.html" class="btn btn-secondary btn-sm">Edit</a>
+                    <a href="supplier-detail.html?id=SUP-004" class="btn btn-secondary btn-sm">Detail</a>
+                    <a href="supplier-contract-detail.html?id=SUP-004" class="btn btn-secondary btn-sm">Kontrak</a>
+                    <a href="supplier-form.html?id=SUP-004" class="btn btn-secondary btn-sm">Edit</a>
+                  </div>
+                </td>
+              </tr>
+
+              <tr data-status="HABIS">
+                <td>
+                  <div class="font-semibold">CV Tirta Mandiri Sejahtera</div>
+                  <div class="text-muted" style="font-size: 11px;">Bogor &bull; ID: SUP-005</div>
+                </td>
+                <td>Bpk. Hendra Gunawan</td>
+                <td>(0251) 832-1900</td>
+                <td>Air Mineral &amp; Minuman Ringan</td>
+                <td><span class="badge badge-gray">HABIS (15 AGT 2026)</span></td>
+                <td class="text-right">
+                  <div style="display: inline-flex; gap: 6px;">
+                    <a href="supplier-detail.html?id=SUP-005" class="btn btn-secondary btn-sm">Detail</a>
+                    <a href="supplier-contract-detail.html?id=SUP-005" class="btn btn-secondary btn-sm">Kontrak</a>
+                    <a href="supplier-form.html?id=SUP-005" class="btn btn-secondary btn-sm">Edit</a>
                   </div>
                 </td>
               </tr>
@@ -1443,5 +1458,41 @@ html.sidebar-collapsed .sidebar .user-snippet {
   </div>
 
   <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('suppSearch');
+      const statusFilter = document.getElementById('suppStatusFilter');
+      const tableRows = document.querySelectorAll('#suppTable tbody tr');
+      const totalBadge = document.getElementById('vendorTotalBadge');
+
+      function filterSuppliers() {
+        const query = (searchInput?.value || '').toLowerCase().trim();
+        const selectedStatus = (statusFilter?.value || '').toUpperCase();
+        let visibleCount = 0;
+
+        tableRows.forEach(row => {
+          const rowText = row.innerText.toLowerCase();
+          const rowStatus = (row.dataset.status || '').toUpperCase();
+
+          const matchesQuery = !query || rowText.includes(query);
+          const matchesStatus = !selectedStatus || rowStatus.includes(selectedStatus);
+
+          if (matchesQuery && matchesStatus) {
+            row.style.display = '';
+            visibleCount++;
+          } else {
+            row.style.display = 'none';
+          }
+        });
+
+        if (totalBadge) {
+          totalBadge.textContent = `TOTAL: ${visibleCount} VENDOR REKANAN`;
+        }
+      }
+
+      searchInput?.addEventListener('input', filterSuppliers);
+      statusFilter?.addEventListener('change', filterSuppliers);
+    });
+  </script>
 </body>
 </html>

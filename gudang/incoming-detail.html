@@ -1300,14 +1300,10 @@ html.sidebar-collapsed .sidebar .user-snippet {
         <div class="page-header">
           <div>
             <h1 class="page-title">Verifikasi Penerimaan PO-2026-0901</h1>
-            <p class="page-subtitle">Verifikasi jumlah fisik barang, kondisi kemasan, dan kalkulasi HPP otomatis.</p>
+            <p class="page-subtitle">Verifikasi jumlah fisik barang, kondisi kemasan, tanggal kedaluwarsa, dan kalkulasi HPP otomatis.</p>
           </div>
-          <div style="display: flex; gap: 8px;">
-            <a href="return-detail.html" class="btn btn-danger">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
-              <span>Ajukan Retur Barang Cacat</span>
-            </a>
-            
+          <div>
+            <span class="badge badge-black" style="padding: 6px 12px; font-size: 12px;">STATUS: PROSES VERIFIKASI</span>
           </div>
         </div>
 
@@ -1315,14 +1311,14 @@ html.sidebar-collapsed .sidebar .user-snippet {
         <div class="card mb-4">
           <div class="card-header">
             <span class="card-title">Informasi Dokumen Pengiriman &amp; Supplier</span>
-            <span class="badge badge-black">STATUS: PROSES VERIFIKASI</span>
+            <span class="text-muted font-mono" style="font-size: var(--text-xs);">PO-2026-0901</span>
           </div>
           <div class="card-body">
             <div class="form-grid mb-3">
               <div>
                 <div class="text-muted" style="font-size: var(--text-xs);">Nama Perusahaan Supplier:</div>
                 <div class="font-semibold" style="font-size: var(--text-base);">PT Indofood Sukses Makmur</div>
-                <div class="text-muted" style="font-size: var(--text-xs);">PIC: Bpk. Haryanto &bull; Telp: (021) 522-8800</div>
+                <div class="text-muted" style="font-size: var(--text-xs);">CP: Bpk. Haryanto (021) 522-8800</div>
               </div>
               <div>
                 <div class="text-muted" style="font-size: var(--text-xs);">Nomor Purchase Order:</div>
@@ -1336,21 +1332,14 @@ html.sidebar-collapsed .sidebar .user-snippet {
               </div>
             </div>
 
-            <div style="border-top: 1px solid var(--border-subtle); padding-top: 14px; margin-top: 10px;">
-              <div style="font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-gray-600); margin-bottom: 10px;">Verifikasi Dokumen Logistik &amp; Armada</div>
-              <div class="form-grid">
-                <div class="form-group" style="margin-bottom: 0;">
-                  <label class="form-label">No. Surat Jalan Supplier</label>
-                  <input type="text" class="form-input font-mono" value="SJ-IF-991204" placeholder="Nomor surat jalan fisik">
-                </div>
-                <div class="form-group" style="margin-bottom: 0;">
-                  <label class="form-label">Nama Sopir &amp; Plat Nomor Armada</label>
-                  <input type="text" class="form-input" value="Bpk. Slamet / Truk Box B 9281 UXT" placeholder="Nama sopir &amp; no polisi">
-                </div>
-                <div class="form-group" style="margin-bottom: 0;">
-                  <label class="form-label">Kondisi Segel Armada / Catatan Logistik</label>
-                  <input type="text" class="form-input" value="Segel kontainer utuh no. SG-4412, terpal kering" placeholder="Catatan kondisi muatan">
-                </div>
+            <div class="form-grid" style="grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border-subtle); padding-top: 14px;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Nomor Surat Jalan</label>
+                <input type="text" class="form-input font-mono" value="SJ-IND-882910" placeholder="Nomor tercetak di surat jalan kurir...">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Catatan Pengiriman / Identitas Sopir &amp; Plat Nomor</label>
+                <input type="text" class="form-input" value="B 9281 UXT (Sopir: Pak Bambang) - Segel kontainer aman utuh" placeholder="Nama sopir, nopol kendaraan, kondisi segel...">
               </div>
             </div>
           </div>
@@ -1366,12 +1355,13 @@ html.sidebar-collapsed .sidebar .user-snippet {
             <table class="table">
               <thead>
                 <tr>
-                  <th>Nama Barang</th>
+                  <th>Nama Barang &amp; SKU</th>
                   <th class="th-number">Qty Dipesan</th>
-                  <th class="th-number" style="width: 120px;">Qty Diterima</th>
+                  <th class="th-number" style="width: 100px;">Qty Diterima</th>
+                  <th style="width: 140px;">Tgl Kedaluwarsa</th>
                   <th>Kondisi Barang</th>
                   <th class="th-number">Harga Beli PO</th>
-                  <th class="th-number">HPP Rata-rata Sistem</th>
+                  <th class="th-number">HPP (avg)</th>
                   <th>Catatan Ketidaksesuaian</th>
                 </tr>
               </thead>
@@ -1383,7 +1373,10 @@ html.sidebar-collapsed .sidebar .user-snippet {
                   </td>
                   <td class="td-number font-semibold">20 Sak</td>
                   <td class="td-number">
-                    <input type="number" class="form-input text-right tabular-nums" value="20" style="width: 90px; padding: 6px;">
+                    <input type="number" class="form-input text-right tabular-nums" value="20" style="width: 80px; padding: 6px;">
+                  </td>
+                  <td>
+                    <input type="date" class="form-input" value="2027-08-15" style="padding: 5px 8px; font-size: 12px;">
                   </td>
                   <td>
                     <select class="form-select" style="padding: 6px 10px;">
@@ -1406,7 +1399,10 @@ html.sidebar-collapsed .sidebar .user-snippet {
                   </td>
                   <td class="td-number font-semibold">15 Dus</td>
                   <td class="td-number">
-                    <input type="number" class="form-input text-right tabular-nums" value="14" style="width: 90px; padding: 6px;">
+                    <input type="number" class="form-input text-right tabular-nums font-bold" value="14" style="width: 80px; padding: 6px; border-color: var(--color-black);">
+                  </td>
+                  <td>
+                    <input type="date" class="form-input" value="2027-04-20" style="padding: 5px 8px; font-size: 12px;">
                   </td>
                   <td>
                     <select class="form-select" style="padding: 6px 10px;">
@@ -1429,7 +1425,10 @@ html.sidebar-collapsed .sidebar .user-snippet {
                   </td>
                   <td class="td-number font-semibold">10 Dus</td>
                   <td class="td-number">
-                    <input type="number" class="form-input text-right tabular-nums" value="10" style="width: 90px; padding: 6px;">
+                    <input type="number" class="form-input text-right tabular-nums" value="10" style="width: 80px; padding: 6px;">
+                  </td>
+                  <td>
+                    <input type="date" class="form-input" value="2027-11-30" style="padding: 5px 8px; font-size: 12px;">
                   </td>
                   <td>
                     <select class="form-select" style="padding: 6px 10px;">
@@ -1447,10 +1446,17 @@ html.sidebar-collapsed .sidebar .user-snippet {
               </tbody>
             </table>
           </div>
-          <div class="card-footer">
-            <span class="text-muted" style="font-size: var(--text-xs); margin-right: auto;">HPP rata-rata (Moving Average Cost) dikalkulasi otomatis berdasarkan riwayat stok &amp; harga faktur masuk.</span>
-            <a href="incoming.html" class="btn btn-secondary btn-sm">Batal</a>
-            <button class="btn btn-primary btn-sm" onclick="alert('Penerimaan disimpan. Stok gudang berhasil diperbarui.')">Simpan &amp; Update Stok</button>
+          <div class="card-footer" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <a href="return-detail.html?source=incoming&supplier=PT%20Indofood%20Sukses%20Makmur&po=PO-2026-0901&sku=SKU-8991002&name=Minyak%20Goreng%20Refill%202L&qty=1&unit=Pouch%20(2L)&reason=Kemasan%20Bocor%20/%20Rusak&price=30500&notes=Kurang%201%20pouch%20karena%20bocor%20saat%20serah%20terima%20PO-2026-0901" class="btn btn-secondary btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                <span>Ajukan Retur Barang Cacat</span>
+              </a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <a href="incoming.html" class="btn btn-secondary btn-sm">Batal</a>
+              <button class="btn btn-primary btn-sm" onclick="alert('Penerimaan disimpan. Stok gudang dan tanggal kedaluwarsa berhasil diperbarui!')">Simpan &amp; Update Stok</button>
+            </div>
           </div>
         </div>
       </main>

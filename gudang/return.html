@@ -1292,7 +1292,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
           <span class="header-title">Purchase Return</span>
         </div>
         <div class="header-right">
-          <a href="return-detail.html" class="btn btn-primary btn-sm">
+          <a href="return-detail.html?action=new" class="btn btn-primary btn-sm">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             <span>Buat Retur Baru</span>
           </a>
@@ -1311,20 +1311,20 @@ html.sidebar-collapsed .sidebar .user-snippet {
           <div class="toolbar-left">
             <div class="search-input-wrap">
               <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <input type="text" class="form-input" data-table-filter="returnTable" placeholder="Cari nomor retur atau supplier...">
+              <input type="text" class="form-input" id="searchReturnInput" placeholder="Cari nomor retur atau supplier...">
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: var(--text-xs); font-weight: 500;">Status:</span>
-              <select class="form-select" style="width: auto; padding: 7px 10px;">
+              <select class="form-select" id="filterReturnStatus" style="width: auto; padding: 7px 10px;">
                 <option value="">Semua Status</option>
-                <option value="DIAJUKAN">Diajukan</option>
-                <option value="DIKONFIRMASI">Dikonfirmasi Supplier</option>
-                <option value="SELESAI">Selesai</option>
+                <option value="Diajukan">Diajukan</option>
+                <option value="Dikonfirmasi">Dikonfirmasi Supplier</option>
+                <option value="Selesai">Selesai</option>
               </select>
             </div>
           </div>
           <div class="toolbar-right">
-            <span class="badge badge-gray">TOTAL: 3 PENGURUSAN RETUR</span>
+            <span class="badge badge-gray" id="totalReturnBadge">TOTAL: 3 PENGURUSAN RETUR</span>
           </div>
         </div>
 
@@ -1340,37 +1340,8 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 <th class="text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td class="font-mono font-semibold">RET-2026-0901</td>
-                <td class="font-semibold">PT Indofood Sukses Makmur</td>
-                <td class="td-muted">04 Sep 2026</td>
-                <td class="td-number font-semibold">1 Pouch (Minyak Goreng)</td>
-                <td><span class="badge badge-black">DIAJUKAN</span></td>
-                <td class="text-right">
-                  <a href="return-detail.html" class="btn btn-secondary btn-sm">Lihat Timeline &amp; Detail</a>
-                </td>
-              </tr>
-              <tr>
-                <td class="font-mono font-semibold">RET-2026-0888</td>
-                <td class="font-semibold">PT Mayora Indah Tbk</td>
-                <td class="td-muted">28 Agu 2026</td>
-                <td class="td-number font-semibold">4 Kaleng (Biskuit)</td>
-                <td><span class="badge badge-gray">DIKONFIRMASI SUPPLIER</span></td>
-                <td class="text-right">
-                  <a href="return-detail.html" class="btn btn-secondary btn-sm">Lihat Timeline &amp; Detail</a>
-                </td>
-              </tr>
-              <tr>
-                <td class="font-mono font-semibold">RET-2026-0870</td>
-                <td class="font-semibold">CV Sumber Berkah Sembako</td>
-                <td class="td-muted">18 Agu 2026</td>
-                <td class="td-number font-semibold">2 Sak (Gula Pasir)</td>
-                <td><span class="badge badge-gray">SELESAI (NOTA KREDIT)</span></td>
-                <td class="text-right">
-                  <a href="return-detail.html" class="btn btn-secondary btn-sm">Lihat Timeline &amp; Detail</a>
-                </td>
-              </tr>
+            <tbody id="returnTableBody">
+              <!-- Rendered dynamically by script -->
             </tbody>
           </table>
         </div>
@@ -1379,5 +1350,89 @@ html.sidebar-collapsed .sidebar .user-snippet {
   </div>
 
   <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tbody = document.getElementById('returnTableBody');
+      const searchInput = document.getElementById('searchReturnInput');
+      const statusSelect = document.getElementById('filterReturnStatus');
+      const totalBadge = document.getElementById('totalReturnBadge');
+
+      function formatDate(dateStr) {
+        if (!dateStr) return '-';
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = months[d.getMonth()];
+        const year = d.getFullYear();
+        return `${day} ${month} ${year}`;
+      }
+
+      function renderReturns() {
+        const returns = window.PosStore ? window.PosStore.getReturns() : [];
+        const q = (searchInput.value || '').toLowerCase().trim();
+        const statusFilter = (statusSelect.value || '').toLowerCase();
+
+        const filtered = returns.filter(r => {
+          const matchSearch = !q || (r.id && r.id.toLowerCase().includes(q)) || (r.supplier && r.supplier.toLowerCase().includes(q));
+          const matchStatus = !statusFilter || (r.status && r.status.toLowerCase().includes(statusFilter));
+          return matchSearch && matchStatus;
+        });
+
+        totalBadge.textContent = `TOTAL: ${filtered.length} PENGURUSAN RETUR`;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 36px 16px; color: var(--color-gray-500);">
+                Tidak ada data retur yang sesuai kriteria pencarian / filter.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(r => {
+          let badgeClass = 'badge-gray';
+          const st = (r.status || '').toUpperCase();
+          if (st.includes('DIAJUKAN')) badgeClass = 'badge-black';
+          else if (st.includes('SELESAI')) badgeClass = 'badge-outline';
+          else badgeClass = 'badge-gray';
+
+          // Summarize items
+          const itemsCount = r.items ? r.items.length : 0;
+          let itemSummary = `${itemsCount} Item`;
+          if (r.items && r.items.length === 1) {
+            itemSummary = `${r.items[0].qty} ${r.items[0].unit || ''} (${r.items[0].name})`;
+          } else if (r.items && r.items.length > 1) {
+            const totalQty = r.items.reduce((acc, it) => acc + Number(it.qty || 0), 0);
+            itemSummary = `${totalQty} Pcs / Unit (${itemsCount} Produk)`;
+          }
+
+          return `
+            <tr>
+              <td class="font-mono font-semibold">${r.id}</td>
+              <td class="font-semibold">${r.supplier}</td>
+              <td class="td-muted">${formatDate(r.date)}</td>
+              <td class="td-number font-semibold">${itemSummary}</td>
+              <td><span class="badge ${badgeClass}">${(r.status || 'DIAJUKAN').toUpperCase()}</span></td>
+              <td class="text-right">
+                <a href="return-detail.html?id=${encodeURIComponent(r.id)}" class="btn btn-secondary btn-sm">Lihat Timeline &amp; Detail</a>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      renderReturns();
+
+      searchInput.addEventListener('input', renderReturns);
+      statusSelect.addEventListener('change', renderReturns);
+
+      if (window.initCustomSelects) {
+        window.initCustomSelects(document.querySelector('.toolbar'));
+      }
+    });
+  </script>
 </body>
 </html>

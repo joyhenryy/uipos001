@@ -934,7 +934,7 @@ input, select, textarea {
 /* Timeline & Steps */
 .timeline {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   margin: 20px 0;
   position: relative;
@@ -944,8 +944,8 @@ input, select, textarea {
   content: '';
   position: absolute;
   top: 14px;
-  left: 30px;
-  right: 30px;
+  left: 75px;
+  right: 75px;
   height: 2px;
   background: var(--border-subtle);
   z-index: 1;
@@ -958,6 +958,8 @@ input, select, textarea {
   position: relative;
   z-index: 2;
   gap: 6px;
+  width: 150px;
+  text-align: center;
 }
 
 .timeline-node {
@@ -1014,6 +1016,95 @@ input, select, textarea {
 .mb-3 { margin-bottom: 12px; }
 .mb-4 { margin-bottom: 16px; }
 
+.timeline-step {
+  cursor: pointer;
+}
+.timeline-step:hover .timeline-node {
+  border-color: var(--color-black);
+}
+
+/* Printable return nota modal & styles */
+.print-nota-wrap {
+  background: var(--color-white);
+  color: #09090b;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  font-family: var(--font-sans);
+}
+.print-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #09090b;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+}
+.print-title {
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+.print-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+  font-size: 12.5px;
+}
+.print-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+  font-size: 12px;
+}
+.print-table th, .print-table td {
+  border: 1px solid #d4d4d8;
+  padding: 8px 10px;
+  text-align: left;
+}
+.print-table th {
+  background-color: #f4f4f5;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+.print-signatures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  margin-top: 28px;
+  text-align: center;
+  font-size: 12px;
+}
+.print-sig-box {
+  padding-top: 50px;
+  border-top: 1px solid #09090b;
+  font-weight: 600;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printableReturnSlip, #printableReturnSlip * {
+    visibility: visible;
+  }
+  #printableReturnSlip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    border: none;
+    box-shadow: none;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
 
 /* Sidebar Toggle & Collapsed States */
 .sidebar {
@@ -1299,13 +1390,12 @@ html.sidebar-collapsed .sidebar .user-snippet {
       <main class="page-container">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Pengajuan Retur: RET-2026-0901</h1>
-            <p class="page-subtitle">Supplier: PT Indofood Sukses Makmur &bull; Tanggal: 04 September 2026</p>
+            <h1 class="page-title" id="returnPageTitle">Pengajuan Retur: <span class="font-mono" id="docIdDisplay">RET-2026-0901</span></h1>
           </div>
           <div>
-            <button class="btn btn-primary" onclick="alert('Pengajuan retur resmi dikirimkan ke supplier!')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-              <span>Kirim Retur ke Supplier</span>
+            <button type="button" class="btn btn-primary" id="btnSaveAndPrint">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              <span>Simpan &amp; Cetak Nota Retur</span>
             </button>
           </div>
         </div>
@@ -1313,108 +1403,138 @@ html.sidebar-collapsed .sidebar .user-snippet {
         <!-- Status Timeline (Diajukan -> Dikonfirmasi Supplier -> Selesai) -->
         <div class="card mb-4">
           <div class="card-body">
-            <div class="timeline" style="max-width: 650px; margin: 10px auto;">
-              <div class="timeline-step completed">
+            <div class="timeline" style="max-width: 650px; margin: 10px auto;" id="returnTimeline">
+              <div class="timeline-step completed" data-step="Diajukan" onclick="updateReturnStatus('Diajukan')">
                 <div class="timeline-node">1</div>
                 <div class="timeline-label">Diajukan</div>
-                <div class="text-muted" style="font-size: 10px;">04 Sep 2026</div>
+                <div class="text-muted" style="font-size: 10px;" id="dateDiajukan">04 Sep 2026</div>
               </div>
 
-              <div class="timeline-step active">
+              <div class="timeline-step active" data-step="Dikonfirmasi Supplier" onclick="updateReturnStatus('Dikonfirmasi Supplier')">
                 <div class="timeline-node">2</div>
                 <div class="timeline-label">Dikonfirmasi Supplier</div>
-                <div class="text-muted" style="font-size: 10px;">Dalam Proses Review</div>
               </div>
 
-              <div class="timeline-step">
+              <div class="timeline-step" data-step="Selesai" onclick="updateReturnStatus('Selesai')">
                 <div class="timeline-node">3</div>
                 <div class="timeline-label">Selesai (Ganti / Kredit)</div>
-                <div class="text-muted" style="font-size: 10px;">Menunggu</div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-subtle); padding-top: 10px; margin-top: 12px;">
+              <span style="font-size: var(--text-xs); color: var(--color-gray-600); font-weight: 500;">Ubah Status Tracking Retur:</span>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="updateReturnStatus('Diajukan')">Diajukan</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="updateReturnStatus('Dikonfirmasi Supplier')">Dikonfirmasi Supplier</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="updateReturnStatus('Selesai')">Selesai</button>
               </div>
             </div>
           </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 340px; gap: 20px;">
-          <!-- Tabel Barang yang Diretur -->
+          <!-- Left Column: Tabel Dinamis Rincian Barang Retur -->
           <div class="card">
-            <div class="card-header">
-              <span class="card-title">Daftar Barang yang Diretur</span>
-              <span class="badge badge-black">1 ITEM CACAT / BOCOR</span>
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <span class="card-title">Daftar Barang Retur</span>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnAddReturnItem">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>Tambah Barang Retur</span>
+              </button>
             </div>
+
             <div class="table-container" style="border: none; border-radius: 0;">
-              <table class="table">
+              <table class="table" id="tableReturnItems">
                 <thead>
                   <tr>
-                    <th>Nama Barang</th>
-                    <th>No. Batch</th>
-                    <th class="th-number">Qty Retur</th>
-                    <th>Alasan Retur</th>
-                    <th class="th-number">Nilai Taksiran</th>
+                    <th style="min-width: 220px;">Pilihan Barang &amp; SKU</th>
+                    <th class="th-number" style="width: 100px;">Qty Retur</th>
+                    <th style="width: 120px;">Satuan</th>
+                    <th style="min-width: 180px;">Alasan Retur</th>
+                    <th class="th-number" style="width: 130px;">Nilai Taksiran</th>
+                    <th class="text-right" style="width: 50px;">Aksi</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div class="font-semibold">Minyak Goreng Refill 2L</div>
-                      <div class="font-mono td-muted">SKU-8991002</div>
-                    </td>
-                    <td class="font-mono">B-9901</td>
-                    <td class="td-number font-bold">1 Pouch</td>
-                    <td>
-                      <span class="badge badge-outline">KEMASAN BOCOR</span>
-                    </td>
-                    <td class="td-number tabular-nums font-semibold">Rp 30.500</td>
-                  </tr>
+                <tbody id="returnItemsTbody">
+                  <!-- Rendered dynamically -->
                 </tbody>
               </table>
             </div>
+
+            <div class="card-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); background: var(--bg-canvas);">
+              </span>
+              <div style="text-align: right;">
+                <span style="font-size: var(--text-xs); color: var(--color-gray-600); margin-right: 12px;">Total Item: <strong id="summaryItemsTotal">1</strong></span>
+                <span style="font-size: var(--text-sm); font-weight: 700;">Estimasi Total Retur: <span id="summaryAmountTotal" class="font-mono">Rp 30.500</span></span>
+              </div>
+            </div>
+
             <div class="card-body" style="border-top: 1px solid var(--border-subtle);">
-              <div class="form-group">
-                <label class="form-label">Catatan Tambahan untuk Petugas Supplier</label>
-                <textarea class="form-textarea" rows="3">Kemasan pouch bocor di bagian seal bawah saat serah terima barang PO-2026-0901. Sopir ekspedisi supplier telah menandatangani bukti catatan ketidaksesuaian barang.</textarea>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="returnNotes">Catatan Pengiriman / Keterangan untuk Petugas Supplier</label>
+                <textarea class="form-textarea" id="returnNotes" rows="3" placeholder="Contoh: Sopir telah menandatangani bukti berita acara kerusakan kemasan saat serah terima barang..."></textarea>
               </div>
             </div>
           </div>
 
-          <!-- Informasi Supplier & Tindak Lanjut -->
+          <!-- Right Column: Informasi Rekanan & Dokumen Asal -->
           <div style="display: flex; flex-direction: column; gap: 16px;">
             <div class="card">
               <div class="card-header">
-                <span class="card-title">Informasi Supplier</span>
+                <span class="card-title">Panel Rekanan &amp; Dokumen Asal</span>
               </div>
-              <div class="card-body" style="display: flex; flex-direction: column; gap: 10px; font-size: var(--text-sm);">
-                <div>
-                  <span class="text-muted" style="font-size: var(--text-xs);">Perusahaan:</span>
-                  <div class="font-semibold">PT Indofood Sukses Makmur</div>
+              <div class="card-body" style="display: flex; flex-direction: column; gap: 14px; font-size: var(--text-sm);">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">Pilih Supplier <span>*</span></label>
+                  <select class="form-select" id="supplierSelect">
+                    <option value="PT Indofood Sukses Makmur">PT Indofood Sukses Makmur</option>
+                    <option value="PT Mayora Indah Tbk">PT Mayora Indah Tbk</option>
+                    <option value="CV Sumber Berkah Sembako">CV Sumber Berkah Sembako</option>
+                    <option value="PT Wings Surya">PT Wings Surya</option>
+                    <option value="PT Unilever Indonesia">PT Unilever Indonesia</option>
+                  </select>
                 </div>
-                <div>
-                  <span class="text-muted" style="font-size: var(--text-xs);">Contact Person (PIC):</span>
-                  <div>Bpk. Haryanto (Logistik Distributor)</div>
+
+                <div style="padding: 10px; background: var(--color-gray-50); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
+                  <div class="text-muted" style="font-size: var(--text-xs); padding-bottom: 3px;">Contact Person:</div>
+                  <div class="font-semibold" id="supplierPicDisplay" style="font-size: 13px; padding-bottom: 2px;">Bpk. Haryanto</div>
+                  <div class="text-muted font-mono" id="supplierPhoneDisplay" style="font-size: 12px;">0812-1234-5678</div>
                 </div>
-                <div>
-                  <span class="text-muted" style="font-size: var(--text-xs);">No. Telepon:</span>
-                  <div>(021) 522-8800 ext. 201</div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">Referensi No. PO Terkait (Opsional)</label>
+                  <select class="form-select" id="poRefSelect">
+                    <option value="PO-2026-0901">PO-2026-0901 (PT Indofood Sukses Makmur)</option>
+                    <option value="PO-2026-0902">PO-2026-0902 (PT Mayora Indah Tbk)</option>
+                    <option value="PO-2026-0899">PO-2026-0899 (CV Sumber Berkah Sembako)</option>
+                    <option value="PO-2026-0895">PO-2026-0895 (PT Wings Surya)</option>
+                    <option value="PO-2026-0903">PO-2026-0903 (PT Unilever Indonesia)</option>
+                    <option value="Non-PO">Tanpa Referensi PO (Retur Bebas / Stok Toko)</option>
+                  </select>
                 </div>
-                <div>
-                  <span class="text-muted" style="font-size: var(--text-xs);">Ref PO Terkait:</span>
-                  <div class="font-mono">PO-2026-0901</div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">Tanggal Pengajuan Retur</label>
+                  <input type="date" class="form-input" id="returnDateInput" value="2026-09-04">
                 </div>
               </div>
             </div>
 
             <div class="card">
               <div class="card-header">
-                <span class="card-title">Bentuk Penyelesaian</span>
+                <span class="card-title">Bentuk Penyelesaian Kesepakatan</span>
               </div>
               <div class="card-body">
-                <div class="form-group" style="margin-bottom: 0;">
-                  <select class="form-select">
-                    <option selected>Penggantian Barang Fisik Baru</option>
-                    <option>Potong Tagihan Faktur (Nota Kredit)</option>
-                    <option>Pengembalian Uang Tunai</option>
+                <div class="form-group" style="margin-bottom: 6px;">
+                  <label class="form-label">Kompensasi Yang Diminta</label>
+                  <select class="form-select" id="settlementSelect">
+                    <option value="Penggantian Barang Fisik Baru" selected>Penggantian Barang Fisik Baru (Default)</option>
+                    <option value="Pemotongan Pembayaran / Nota Kredit">Pemotongan Pembayaran / Nota Kredit (Kompensasi faktur)</option>
                   </select>
                 </div>
+                </span>
               </div>
             </div>
           </div>
@@ -1423,6 +1543,516 @@ html.sidebar-collapsed .sidebar .user-snippet {
     </div>
   </div>
 
+  <!-- Modal Print Nota Retur Resmi -->
+  <div class="modal-overlay" id="modalPrintNota" style="display: none;">
+    <div class="modal-card" style="max-width: 750px; width: 95%;">
+      <div class="modal-header no-print">
+        <h3 class="modal-title">Dokumen Fisik Nota Retur Pembelian</h3>
+        <button type="button" class="modal-close" onclick="closePrintModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 24px; max-height: 75vh; overflow-y: auto;">
+        <!-- Printable Slip Container -->
+        <div id="printableReturnSlip" class="print-nota-wrap">
+          <div class="print-header">
+            <div>
+              <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #52525b;">SISTEM MANAJEMEN TOKO</div>
+              <div class="print-title">SURAT JALAN &amp; NOTA RETUR BARANG</div>
+              <div style="font-size: 11.5px; color: #52525b; margin-top: 2px;">Toko Berkah Jaya &bull; Divisi Logistik &amp; Gudang Utama</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="font-mono font-bold" style="font-size: 15px;" id="printDocId">RET-2026-0901</div>
+              <div style="font-size: 11.5px; color: #52525b;" id="printDocDate">04 September 2026</div>
+              <span class="badge badge-black" id="printDocStatus" style="margin-top: 4px;">DIAJUKAN</span>
+            </div>
+          </div>
+
+          <div class="print-meta-grid">
+            <div style="background: #fafafa; padding: 12px; border: 1px solid #e4e4e7; border-radius: 4px;">
+              <div style="font-weight: 700; font-size: 11px; text-transform: uppercase; margin-bottom: 4px; color: #52525b;">TUJUAN RETUR (SUPPLIER):</div>
+              <div class="font-bold" id="printSupplierName" style="font-size: 13.5px;">PT Indofood Sukses Makmur</div>
+              <div id="printSupplierPic" style="font-size: 12px; color: #3f3f46;">PIC: Bpk. Haryanto &bull; Telp: (021) 522-8800</div>
+              <div id="printPoRef" style="font-size: 11.5px; color: #71717a; margin-top: 2px;">Ref. PO: PO-2026-0901</div>
+            </div>
+
+            <div style="background: #fafafa; padding: 12px; border: 1px solid #e4e4e7; border-radius: 4px;">
+              <div style="font-weight: 700; font-size: 11px; text-transform: uppercase; margin-bottom: 4px; color: #52525b;">PENGIRIM (TOKO / GUDANG):</div>
+              <div class="font-bold" style="font-size: 13.5px;">Gudang Utama - Toko Berkah Jaya</div>
+              <div style="font-size: 12px; color: #3f3f46;">Petugas: Agus Prasetyo (Staf Gudang)</div>
+              <div id="printSettlement" style="font-size: 11.5px; color: #09090b; font-weight: 600; margin-top: 2px;">Bentuk: Penggantian Barang Fisik Baru</div>
+            </div>
+          </div>
+
+          <div style="font-weight: 700; font-size: 12px; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.04em;">RINCIAN FISIK BARANG YANG DIKEMBALIKAN:</div>
+          <table class="print-table">
+            <thead>
+              <tr>
+                <th style="width: 35px;">No.</th>
+                <th>Nama Produk / SKU</th>
+                <th style="width: 90px; text-align: right;">Qty</th>
+                <th style="width: 100px;">Satuan</th>
+                <th>Alasan Pengembalian</th>
+                <th style="width: 110px; text-align: right;">Estimasi Nilai</th>
+              </tr>
+            </thead>
+            <tbody id="printTableItemsBody">
+              <!-- Rendered items -->
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="5" style="text-align: right; font-weight: 700;">TOTAL ESTIMASI NILAI RETUR:</th>
+                <th style="text-align: right; font-weight: 800; font-family: monospace;" id="printTotalAmount">Rp 30.500</th>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div style="margin-top: 10px; padding: 10px; border: 1px dashed #d4d4d8; border-radius: 4px; font-size: 11.5px; background: #ffffff;">
+            <strong>Catatan Petugas Gudang:</strong>
+            <div id="printNotesText" style="color: #52525b; margin-top: 2px;">Kemasan pouch bocor di bagian seal bawah saat serah terima barang. Sopir ekspedisi telah menandatangani berita acara.</div>
+          </div>
+
+          <div class="print-signatures">
+            <div>
+              <div style="color: #71717a; margin-bottom: 4px;">Diserahkan Oleh:</div>
+              <div class="print-sig-box">
+                <div>( Agus Prasetyo )</div>
+                <div style="font-size: 11px; font-weight: normal; color: #71717a;">Staf Gudang Toko</div>
+              </div>
+            </div>
+            <div>
+              <div style="color: #71717a; margin-bottom: 4px;">Diterima Oleh Ekspedisi / Kurir:</div>
+              <div class="print-sig-box">
+                <div>( ............................................ )</div>
+                <div style="font-size: 11px; font-weight: normal; color: #71717a;">Nama Sopir / No. Polisi Kendaraan</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer no-print">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closePrintModal()">Tutup</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="triggerBrowserPrint()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          <span>Cetak Dokumen Fisik (PDF)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="../js/main.js"></script>
+  <script>
+    const REASONS = [
+      'Kemasan Bocor / Rusak',
+      'Cacat Pabrik',
+      'Mendekati Kedaluwarsa',
+      'Lewat Kedaluwarsa',
+      'Rusak di Rak Penyimpanan'
+    ];
+
+    const SUPPLIER_META = {
+      'PT Indofood Sukses Makmur': { pic: 'Bpk. Haryanto', phone: '(021) 522-8800' },
+      'PT Mayora Indah Tbk': { pic: 'Ibu Rina Melati', phone: '(021) 565-3321' },
+      'CV Sumber Berkah Sembako': { pic: 'H. Sudirman', phone: '0812-3456-7890' },
+      'PT Wings Surya': { pic: 'Bpk. Gunawan', phone: '(031) 843-2211' },
+      'PT Unilever Indonesia': { pic: 'Bpk. Adrian', phone: '(021) 8082-7000' }
+    };
+
+    let currentReturnDoc = null;
+    let returnItems = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnId = urlParams.get('id');
+      const isNew = urlParams.get('action') === 'new';
+      const source = urlParams.get('source');
+
+      const supplierSelect = document.getElementById('supplierSelect');
+      const poRefSelect = document.getElementById('poRefSelect');
+      const returnDateInput = document.getElementById('returnDateInput');
+      const settlementSelect = document.getElementById('settlementSelect');
+      const returnNotes = document.getElementById('returnNotes');
+
+      supplierSelect.addEventListener('change', onSupplierChange);
+
+      if (returnId) {
+        // Load existing return
+        const existing = window.PosStore ? window.PosStore.getReturnById(returnId) : null;
+        if (existing) {
+          currentReturnDoc = JSON.parse(JSON.stringify(existing));
+        } else {
+          currentReturnDoc = createNewReturnSkeleton(returnId);
+        }
+      } else if (isNew) {
+        currentReturnDoc = createNewReturnSkeleton();
+      } else if (source === 'incoming' || source === 'expiry') {
+        currentReturnDoc = createNewReturnSkeleton();
+        if (urlParams.get('supplier')) {
+          currentReturnDoc.supplier = urlParams.get('supplier');
+        }
+        if (urlParams.get('po')) {
+          currentReturnDoc.poRef = urlParams.get('po');
+        }
+        if (urlParams.get('notes')) {
+          currentReturnDoc.notes = urlParams.get('notes');
+        }
+
+        // Prefill single item
+        const sku = urlParams.get('sku');
+        const name = urlParams.get('name');
+        const qty = Number(urlParams.get('qty')) || 1;
+        const unit = urlParams.get('unit') || 'Pcs';
+        const reason = urlParams.get('reason') || 'Kemasan Bocor / Rusak';
+        const price = Number(urlParams.get('price')) || 30000;
+
+        if (sku || name) {
+          currentReturnDoc.items = [
+            { sku: sku || 'SKU-TEMP', name: name || 'Produk Retur', qty, unit, reason, buyPrice: price, subtotal: price * qty }
+          ];
+        }
+      } else {
+        // Default fallback to first return
+        const returns = window.PosStore ? window.PosStore.getReturns() : [];
+        currentReturnDoc = returns.length > 0 ? JSON.parse(JSON.stringify(returns[0])) : createNewReturnSkeleton();
+      }
+
+      // Populate form from currentReturnDoc
+      populateFormFromDoc(currentReturnDoc);
+
+      // Event listener for add item
+      document.getElementById('btnAddReturnItem').addEventListener('click', () => {
+        addItemRow();
+      });
+
+      // Event listener for Save & Print
+      document.getElementById('btnSaveAndPrint').addEventListener('click', saveAndOpenPrintModal);
+
+      if (window.initCustomSelects) {
+        window.initCustomSelects(document.querySelector('.card-body'));
+      }
+    });
+
+    function createNewReturnSkeleton(customId) {
+      const today = new Date().toISOString().split('T')[0];
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      const id = customId || `RET-2026-${randomNum}`;
+      return {
+        id,
+        supplier: 'PT Indofood Sukses Makmur',
+        pic: 'Bpk. Haryanto (Logistik Distributor)',
+        phone: '(021) 522-8800 ext. 201',
+        poRef: 'PO-2026-0901',
+        date: today,
+        status: 'Diajukan',
+        settlement: 'Penggantian Barang Fisik Baru',
+        notes: '',
+        items: []
+      };
+    }
+
+    function onSupplierChange() {
+      const sup = document.getElementById('supplierSelect').value;
+      const meta = SUPPLIER_META[sup] || { pic: 'Bagian Logistik', phone: '-' };
+      document.getElementById('supplierPicDisplay').textContent = meta.pic;
+      document.getElementById('supplierPhoneDisplay').textContent = meta.phone;
+      updatePageHeader();
+    }
+
+    function populateFormFromDoc(doc) {
+      document.getElementById('docIdDisplay').textContent = doc.id;
+      document.getElementById('supplierSelect').value = doc.supplier || 'PT Indofood Sukses Makmur';
+      onSupplierChange();
+
+      if (doc.poRef) {
+        document.getElementById('poRefSelect').value = doc.poRef;
+      }
+      if (doc.date) {
+        document.getElementById('returnDateInput').value = doc.date;
+      }
+      if (doc.settlement) {
+        document.getElementById('settlementSelect').value = doc.settlement;
+      }
+      if (doc.notes) {
+        document.getElementById('returnNotes').value = doc.notes;
+      }
+
+      returnItems = (doc.items && doc.items.length > 0) ? [...doc.items] : [];
+      if (returnItems.length === 0) {
+        // If empty, add 1 default row from catalog
+        const prods = window.PosStore ? window.PosStore.getProducts() : [];
+        if (prods.length > 0) {
+          const p = prods[1] || prods[0];
+          returnItems.push({
+            sku: p.sku || '',
+            name: p.name,
+            qty: 1,
+            unit: p.unit || 'Pcs',
+            reason: 'Kemasan Bocor / Rusak',
+            buyPrice: p.buyPrice || 25000,
+            subtotal: p.buyPrice || 25000
+          });
+        }
+      }
+
+      renderItemsTable();
+      renderTimeline(doc.status || 'Diajukan');
+      updatePageHeader();
+    }
+
+    function updatePageHeader() {
+      const id = document.getElementById('docIdDisplay').textContent;
+      document.getElementById('returnPageTitle').innerHTML = `Pengajuan Retur: <span class="font-mono">${id}</span>`;
+    }
+
+    function renderTimeline(status) {
+      const timeline = document.getElementById('returnTimeline');
+      const steps = timeline.querySelectorAll('.timeline-step');
+      
+      steps.forEach(st => {
+        st.classList.remove('completed', 'active');
+      });
+
+      if (status === 'Diajukan') {
+        steps[0].classList.add('active');
+      } else if (status === 'Dikonfirmasi Supplier' || status === 'Dikonfirmasi') {
+        steps[0].classList.add('completed');
+        steps[1].classList.add('active');
+      } else if (status === 'Selesai' || status.includes('SELESAI')) {
+        steps[0].classList.add('completed');
+        steps[1].classList.add('completed');
+        steps[2].classList.add('active');
+      }
+    }
+
+    function updateReturnStatus(newStatus) {
+      if (!currentReturnDoc) return;
+      currentReturnDoc.status = newStatus;
+      renderTimeline(newStatus);
+      if (window.PosStore) {
+        window.PosStore.updateReturn(currentReturnDoc.id, { status: newStatus });
+      }
+    }
+
+    function renderItemsTable() {
+      const tbody = document.getElementById('returnItemsTbody');
+      const products = window.PosStore ? window.PosStore.getProducts() : [];
+
+      if (returnItems.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 24px; color: var(--color-gray-500);">
+              Belum ada barang retur dalam daftar. Klik <strong>"+ Tambah Barang Retur"</strong> di atas.
+            </td>
+          </tr>
+        `;
+        recalculateTotals();
+        return;
+      }
+
+      tbody.innerHTML = returnItems.map((item, idx) => {
+        const productOptions = products.map(p => {
+          const selected = (p.sku === item.sku || p.name === item.name) ? 'selected' : '';
+          return `<option value="${p.sku}" data-name="${p.name}" data-price="${p.buyPrice}" data-unit="${p.unit || 'Pcs'}" ${selected}>${p.name} (${p.sku})</option>`;
+        }).join('');
+
+        const reasonOptions = REASONS.map(r => {
+          const selected = (r === item.reason) ? 'selected' : '';
+          return `<option value="${r}" ${selected}>${r}</option>`;
+        }).join('');
+
+        const subtotalFormatted = window.PosStore ? window.PosStore.formatRupiah(item.subtotal) : `Rp ${Number(item.subtotal).toLocaleString('id-ID')}`;
+
+        return `
+          <tr data-row-index="${idx}">
+            <td>
+              <select class="form-select item-product-select" onchange="onItemProductChange(${idx}, this)" style="padding: 6px 10px; font-weight: 600;">
+                ${productOptions}
+              </select>
+            </td>
+            <td class="td-number">
+              <input type="number" class="form-input text-right tabular-nums item-qty-input" min="1" value="${item.qty}" onchange="onItemQtyChange(${idx}, this.value)" style="width: 80px; padding: 6px 8px;">
+            </td>
+            <td>
+              <span class="badge badge-gray font-mono" style="font-size: 11px;">${item.unit || 'Pcs'}</span>
+            </td>
+            <td>
+              <select class="form-select item-reason-select" onchange="onItemReasonChange(${idx}, this.value)" style="padding: 6px 8px; font-size: 12.5px;">
+                ${reasonOptions}
+              </select>
+            </td>
+            <td class="td-number font-semibold tabular-nums" id="subtotal-${idx}">
+              ${subtotalFormatted}
+            </td>
+            <td class="text-right">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="removeItemRow(${idx})" title="Hapus Barang" style="padding: 4px 8px; color: var(--color-black);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      recalculateTotals();
+
+      if (window.initCustomSelects) {
+        window.initCustomSelects(tbody);
+      }
+    }
+
+    function onItemProductChange(idx, selectEl) {
+      const selectedOpt = selectEl.options[selectEl.selectedIndex];
+      const sku = selectEl.value;
+      const name = selectedOpt.getAttribute('data-name');
+      const buyPrice = Number(selectedOpt.getAttribute('data-price')) || 0;
+      const unit = selectedOpt.getAttribute('data-unit') || 'Pcs';
+
+      if (returnItems[idx]) {
+        returnItems[idx].sku = sku;
+        returnItems[idx].name = name;
+        returnItems[idx].buyPrice = buyPrice;
+        returnItems[idx].unit = unit;
+        returnItems[idx].subtotal = buyPrice * Number(returnItems[idx].qty || 1);
+      }
+      renderItemsTable();
+    }
+
+    function onItemQtyChange(idx, val) {
+      const qty = Math.max(1, Number(val) || 1);
+      if (returnItems[idx]) {
+        returnItems[idx].qty = qty;
+        returnItems[idx].subtotal = (returnItems[idx].buyPrice || 0) * qty;
+        const subtotalEl = document.getElementById(`subtotal-${idx}`);
+        if (subtotalEl) {
+          subtotalEl.textContent = window.PosStore ? window.PosStore.formatRupiah(returnItems[idx].subtotal) : `Rp ${returnItems[idx].subtotal}`;
+        }
+      }
+      recalculateTotals();
+    }
+
+    function onItemReasonChange(idx, val) {
+      if (returnItems[idx]) {
+        returnItems[idx].reason = val;
+      }
+    }
+
+    function addItemRow() {
+      const products = window.PosStore ? window.PosStore.getProducts() : [];
+      const p = products[0] || { sku: 'SKU-NEW', name: 'Produk Baru', buyPrice: 20000, unit: 'Pcs' };
+      returnItems.push({
+        sku: p.sku,
+        name: p.name,
+        qty: 1,
+        unit: p.unit || 'Pcs',
+        reason: 'Kemasan Bocor / Rusak',
+        buyPrice: p.buyPrice || 20000,
+        subtotal: p.buyPrice || 20000
+      });
+      renderItemsTable();
+    }
+
+    function removeItemRow(idx) {
+      returnItems.splice(idx, 1);
+      renderItemsTable();
+    }
+
+    function recalculateTotals() {
+      const totalCount = returnItems.length;
+      const totalAmount = returnItems.reduce((acc, item) => acc + (Number(item.subtotal) || 0), 0);
+      
+      const badgeCount = document.getElementById('badgeItemCount');
+      if (badgeCount) {
+        badgeCount.textContent = `${totalCount} ITEM DIRETUR`;
+      }
+      const summaryItemsTotal = document.getElementById('summaryItemsTotal');
+      if (summaryItemsTotal) {
+        summaryItemsTotal.textContent = `${totalCount} Produk`;
+      }
+      const summaryAmountTotal = document.getElementById('summaryAmountTotal');
+      if (summaryAmountTotal) {
+        summaryAmountTotal.textContent = window.PosStore ? window.PosStore.formatRupiah(totalAmount) : `Rp ${totalAmount.toLocaleString('id-ID')}`;
+      }
+    }
+
+    function saveAndOpenPrintModal() {
+      if (returnItems.length === 0) {
+        alert('Mohon tambahkan minimal 1 item barang yang akan diretur.');
+        return;
+      }
+
+      const id = document.getElementById('docIdDisplay').textContent;
+      const supplier = document.getElementById('supplierSelect').value;
+      const meta = SUPPLIER_META[supplier] || { pic: 'Logistik Supplier', phone: '-' };
+      const poRef = document.getElementById('poRefSelect').value;
+      const date = document.getElementById('returnDateInput').value;
+      const settlement = document.getElementById('settlementSelect').value;
+      const notes = document.getElementById('returnNotes').value;
+      const status = (currentReturnDoc && currentReturnDoc.status) ? currentReturnDoc.status : 'Diajukan';
+
+      const docData = {
+        id,
+        supplier,
+        pic: meta.pic,
+        phone: meta.phone,
+        poRef,
+        date,
+        status,
+        settlement,
+        notes,
+        items: JSON.parse(JSON.stringify(returnItems))
+      };
+
+      currentReturnDoc = docData;
+
+      if (window.PosStore) {
+        const existing = window.PosStore.getReturnById(id);
+        if (existing) {
+          window.PosStore.updateReturn(id, docData);
+        } else {
+          window.PosStore.addReturn(docData);
+        }
+      }
+
+      // Populate Print Slip
+      document.getElementById('printDocId').textContent = id;
+      document.getElementById('printDocDate').textContent = date;
+      document.getElementById('printDocStatus').textContent = (status || 'DIAJUKAN').toUpperCase();
+      document.getElementById('printSupplierName').textContent = supplier;
+      document.getElementById('printSupplierPic').textContent = `PIC: ${meta.pic} \u2022 Telp: ${meta.phone}`;
+      document.getElementById('printPoRef').textContent = `Ref. PO: ${poRef}`;
+      document.getElementById('printSettlement').textContent = `Bentuk: ${settlement}`;
+      document.getElementById('printNotesText').textContent = notes || 'Tidak ada catatan khusus.';
+
+      const printTbody = document.getElementById('printTableItemsBody');
+      printTbody.innerHTML = returnItems.map((item, idx) => `
+        <tr>
+          <td style="text-align: center;">${idx + 1}</td>
+          <td>
+            <div style="font-weight: 700;">${item.name}</div>
+            <div style="font-family: monospace; font-size: 11px; color: #52525b;">${item.sku}</div>
+          </td>
+          <td style="text-align: right; font-weight: 700;">${item.qty}</td>
+          <td>${item.unit || 'Pcs'}</td>
+          <td><span style="font-weight: 600; font-size: 11.5px;">${item.reason}</span></td>
+          <td style="text-align: right; font-family: monospace; font-weight: 600;">${window.PosStore ? window.PosStore.formatRupiah(item.subtotal) : 'Rp ' + item.subtotal}</td>
+        </tr>
+      `).join('');
+
+      const totalAmount = returnItems.reduce((acc, item) => acc + (Number(item.subtotal) || 0), 0);
+      document.getElementById('printTotalAmount').textContent = window.PosStore ? window.PosStore.formatRupiah(totalAmount) : `Rp ${totalAmount.toLocaleString('id-ID')}`;
+
+      // Show modal
+      const modal = document.getElementById('modalPrintNota');
+      modal.style.display = 'flex';
+      modal.classList.add('active');
+    }
+
+    function closePrintModal() {
+      const modal = document.getElementById('modalPrintNota');
+      modal.style.display = 'none';
+      modal.classList.remove('active');
+    }
+
+    function triggerBrowserPrint() {
+      window.print();
+    }
+  </script>
 </body>
 </html>
