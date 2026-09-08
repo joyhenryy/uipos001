@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         const targetId = link.getAttribute('data-tab-target');
-        
+
         links.forEach(l => l.classList.remove('active'));
         link.classList.add('active');
 
@@ -433,7 +433,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-window.initCustomSelects = function(root = document) {
+window.initCustomSelects = function (root = document) {
   injectGlobalDropdownStyles();
 
   const selects = root.querySelectorAll('select.form-select');
@@ -781,10 +781,10 @@ window.PosStore = {
   },
   verifyPOArrival(id, arrivalDate) {
     let list = this.getPOs();
-    list = list.map(p => p.id === id ? { 
-      ...p, 
-      status: 'Selesai Verifikasi', 
-      arrivalDate: arrivalDate || new Date().toISOString().split('T')[0] 
+    list = list.map(p => p.id === id ? {
+      ...p,
+      status: 'Selesai Verifikasi',
+      arrivalDate: arrivalDate || new Date().toISOString().split('T')[0]
     } : p);
     this.savePOs(list);
     return list;
