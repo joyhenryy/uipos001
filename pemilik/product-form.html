@@ -1336,16 +1336,10 @@ html.sidebar-collapsed .sidebar .user-snippet {
                   <input type="text" class="form-input" id="prodNameInput" placeholder="contoh: Beras Premium Ramos 5kg" value="Beras Premium Ramos 5kg" required>
                 </div>
 
-                <div class="form-grid-2">
-                  <div class="form-group">
-                    <label class="form-label">Kode SKU <span style="color: var(--color-black);">*</span></label>
-                    <input type="text" class="form-input font-mono" id="prodSkuInput" placeholder="contoh: SKU-8991001" value="SKU-8991001" required>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Kode Barcode</label>
-                    <input type="text" class="form-input font-mono" id="prodBarcodeInput" placeholder="contoh: 899100100012" value="899100100012">
-                    <span class="form-hint">Nomor barcode pabrik jika ada.</span>
-                  </div>
+                <div class="form-group">
+                  <label class="form-label">Kode SKU <span style="color: var(--color-black);">*</span></label>
+                  <input type="text" class="form-input font-mono" id="prodSkuInput" placeholder="contoh: SKU-8991001" value="SKU-8991001" required>
+                  <span class="form-hint">Kode unik pengenal produk untuk pemilik toko dan inventaris.</span>
                 </div>
 
                 <div class="form-grid-2">
@@ -1432,7 +1426,6 @@ html.sidebar-collapsed .sidebar .user-snippet {
       e.preventDefault();
       const name = document.getElementById('prodNameInput').value.trim();
       const sku = document.getElementById('prodSkuInput').value.trim();
-      const barcode = document.getElementById('prodBarcodeInput').value.trim();
       const category = document.getElementById('prodCategorySelect').value;
       const unit = document.getElementById('prodUnitSelect').value;
       const buyPrice = parseFloat(document.getElementById('prodBuyPriceInput').value) || 0;
@@ -1443,7 +1436,6 @@ html.sidebar-collapsed .sidebar .user-snippet {
         id: 'PROD-' + Date.now().toString().slice(-4),
         name,
         sku,
-        barcode,
         category,
         unit,
         buyPrice,

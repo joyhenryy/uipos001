@@ -1454,7 +1454,7 @@ tr.is-active-row {
               <span class="badge badge-black">DOKUMEN BARU</span>
             </div>
             <div class="card-body">
-              <div class="form-grid">
+              <div class="form-grid mb-3">
                 <div class="form-group">
                   <label class="form-label">Nomor Purchase Order</label>
                   <input type="text" class="form-input font-mono" id="poNumberInput" value="PO-2026-0904" placeholder="Contoh: PO-2026-0904" required>
@@ -1462,7 +1462,7 @@ tr.is-active-row {
 
                 <div class="form-group">
                   <label class="form-label">Tanggal Pemesanan</label>
-                  <input type="date" class="form-input" value="2026-09-06" required>
+                  <input type="date" class="form-input" id="poOrderDateInput" value="2026-09-06" required>
                 </div>
 
                 <div class="form-group">
@@ -1475,13 +1475,10 @@ tr.is-active-row {
                     <option value="berkah">CV Sumber Berkah Sembako (PIC: H. Sudirman)</option>
                   </select>
                 </div>
+              </div>
 
-                <div class="form-group">
-                  <label class="form-label">Estimasi Tanggal Tiba di Gudang</label>
-                  <input type="date" class="form-input" value="2026-09-09" required>
-                </div>
-
-                <div class="form-group">
+              <div class="form-grid-2">
+                <div class="form-group" style="margin-bottom: 0;">
                   <label class="form-label">Termin Pembayaran</label>
                   <select class="form-select">
                     <option value="tempo30" selected>Tempo 30 Hari (Net 30)</option>
@@ -1491,7 +1488,7 @@ tr.is-active-row {
                   </select>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom: 0;">
                   <label class="form-label">Tujuan Penerimaan / Gudang</label>
                   <input type="text" class="form-input" id="deliveryDestinationInput" value="Gudang Utama - Toko Berkah Jaya (Jl. Ahmad Yani No. 45)" placeholder="Lokasi gudang penerimaan barang" required>
                 </div>
@@ -2126,7 +2123,6 @@ tr.is-active-row {
         id: 'PROD-' + Date.now().toString().slice(-4),
         name,
         sku,
-        barcode: '899' + sku.replace(/\D/g, '').padEnd(9, '0'),
         category,
         unit,
         buyPrice: 0,
@@ -2189,14 +2185,16 @@ tr.is-active-row {
       let totalPcs = 0;
       rows.forEach(r => totalPcs += (parseFloat(r.querySelector('.item-qty').value) || 0));
 
+      const orderDate = document.getElementById('poOrderDateInput') ? document.getElementById('poOrderDateInput').value : '2026-09-06';
+
       return {
         id: poNo,
         supplier: supplierText,
         pic: picText,
-        date: '2026-09-06',
-        eta: '2026-09-09',
+        date: orderDate,
+        arrivalDate: null,
         itemsCount,
-        totalQty: `${totalPcs} Satuan (${itemsCount} SKU)`,
+        totalQty: `${totalPcs} Satuan (${itemsCount} Item)`,
         totalAmount,
         status,
         destination,

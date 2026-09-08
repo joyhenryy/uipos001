@@ -1382,12 +1382,17 @@ html.sidebar-collapsed .sidebar .user-snippet {
           ? `<a href="incoming-detail.html" class="btn btn-primary btn-sm">Verifikasi Barang</a>`
           : `<a href="incoming-detail.html" class="btn btn-secondary btn-sm">Lihat Rincian</a>`;
 
+        const arrivalDisplay = po.arrivalDate 
+          ? `<span class="font-medium font-mono">${po.arrivalDate}</span>` 
+          : `<span class="badge badge-outline" style="border-style: dashed; font-size: 11px; color: var(--text-muted);">Belum Ditentukan</span>`;
+        const cleanQty = (po.totalQty || `${po.itemsCount || 1} Item`).replace(/\s*\(\d+\s*SKU\)/gi, '');
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td class="font-mono font-semibold">${po.id}</td>
           <td class="font-semibold">${po.supplier}</td>
-          <td class="td-muted">${po.eta || po.date} 09:30 WIB</td>
-          <td class="td-number font-semibold">${po.totalQty || `${po.itemsCount || 1} Item`}</td>
+          <td class="td-muted">${arrivalDisplay}</td>
+          <td class="td-number font-semibold">${cleanQty}</td>
           <td>${badge}</td>
           <td class="text-right">
             ${actionBtn}

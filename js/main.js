@@ -588,20 +588,20 @@ window.PosStore = {
   ],
 
   defaultProducts: [
-    { id: 'PROD-001', name: 'Beras Premium Ramos 5kg', sku: 'SKU-8991001', barcode: '899100100012', category: 'Sembako', unit: 'Sak / Karung (5kg)', buyPrice: 64250, sellPrice: 74000, stock: 42, status: 'Tersedia' },
-    { id: 'PROD-002', name: 'Minyak Goreng Refill 2L', sku: 'SKU-8991002', barcode: '899100200025', category: 'Sembako', unit: 'Pouch (2L)', buyPrice: 29500, sellPrice: 34500, stock: 4, status: 'Kritis' },
-    { id: 'PROD-003', name: 'Gula Pasir Kristal Putih 1kg', sku: 'SKU-8991003', barcode: '899100300038', category: 'Sembako', unit: 'Pcs', buyPrice: 15200, sellPrice: 17500, stock: 65, status: 'Tersedia' },
-    { id: 'PROD-004', name: 'Susu UHT Cokelat 1L', sku: 'SKU-8992001', barcode: '899200100041', category: 'Minuman', unit: 'Dus (40 pcs)', buyPrice: 16500, sellPrice: 19800, stock: 18, status: 'Tersedia' },
-    { id: 'PROD-005', name: 'Kopi Arabika Tubruk 200g', sku: 'SKU-8992002', barcode: '899200200054', category: 'Minuman', unit: 'Pcs', buyPrice: 19500, sellPrice: 24000, stock: 31, status: 'Tersedia' },
-    { id: 'PROD-006', name: 'Deterjen Bubuk Konsentrat 800g', sku: 'SKU-8994001', barcode: '899400100067', category: 'Kebersihan', unit: 'Pcs', buyPrice: 17800, sellPrice: 21500, stock: 22, status: 'Tersedia' }
+    { id: 'PROD-001', name: 'Beras Premium Ramos 5kg', sku: 'SKU-8991001', category: 'Sembako', unit: 'Sak / Karung (5kg)', buyPrice: 64250, sellPrice: 74000, stock: 42, status: 'Tersedia' },
+    { id: 'PROD-002', name: 'Minyak Goreng Refill 2L', sku: 'SKU-8991002', category: 'Sembako', unit: 'Pouch (2L)', buyPrice: 29500, sellPrice: 34500, stock: 4, status: 'Kritis' },
+    { id: 'PROD-003', name: 'Gula Pasir Kristal Putih 1kg', sku: 'SKU-8991003', category: 'Sembako', unit: 'Pcs', buyPrice: 15200, sellPrice: 17500, stock: 65, status: 'Tersedia' },
+    { id: 'PROD-004', name: 'Susu UHT Cokelat 1L', sku: 'SKU-8992001', category: 'Minuman', unit: 'Dus (40 pcs)', buyPrice: 16500, sellPrice: 19800, stock: 18, status: 'Tersedia' },
+    { id: 'PROD-005', name: 'Kopi Arabika Tubruk 200g', sku: 'SKU-8992002', category: 'Minuman', unit: 'Pcs', buyPrice: 19500, sellPrice: 24000, stock: 31, status: 'Tersedia' },
+    { id: 'PROD-006', name: 'Deterjen Bubuk Konsentrat 800g', sku: 'SKU-8994001', category: 'Kebersihan', unit: 'Pcs', buyPrice: 17800, sellPrice: 21500, stock: 22, status: 'Tersedia' }
   ],
 
   defaultPOs: [
-    { id: 'PO-2026-0901', supplier: 'PT Indofood Sukses Makmur', pic: 'Bpk. Haryanto (021) 522-8800', date: '2026-09-02', eta: '2026-09-04', itemsCount: 3, totalQty: '45 Dus (3 SKU)', totalAmount: 12850000, status: 'Menunggu Verifikasi Gudang', destination: 'Gudang Utama - Toko Berkah Jaya', paymentTerm: 'Tempo 30 Hari (Net 30)', notes: 'Harap sertakan faktur pajak dan surat jalan resmi bermaterai.' },
-    { id: 'PO-2026-0902', supplier: 'PT Mayora Indah Tbk', pic: 'Ibu Rina Melati (021) 565-3321', date: '2026-09-03', eta: '2026-09-05', itemsCount: 2, totalQty: '30 Dus (2 SKU)', totalAmount: 8400000, status: 'Menunggu Verifikasi Gudang', destination: 'Gudang Utama - Toko Berkah Jaya', paymentTerm: 'Tempo 14 Hari', notes: 'Kirim pagi sebelum pukul 11:00 WIB.' },
-    { id: 'PO-2026-0899', supplier: 'CV Sumber Berkah Sembako', pic: 'H. Sudirman (0812-3456-7890)', date: '2026-08-28', eta: '2026-08-30', itemsCount: 4, totalQty: '120 Sak (4 SKU)', totalAmount: 18250000, status: 'Selesai Verifikasi', destination: 'Gudang Utama - Toko Berkah Jaya', paymentTerm: 'COD / Tunai', notes: 'Verifikasi fisik telah lengkap.' },
-    { id: 'PO-2026-0895', supplier: 'PT Wings Surya', pic: 'Bpk. Gunawan (031) 843-2211', date: '2026-08-25', eta: '2026-08-28', itemsCount: 5, totalQty: '80 Karton (5 SKU)', totalAmount: 9000000, status: 'Selesai Verifikasi', destination: 'Gudang Utama - Toko Berkah Jaya', paymentTerm: 'Tempo 30 Hari', notes: 'Semua barang diterima dalam kondisi baik.' },
-    { id: 'PO-2026-0903', supplier: 'PT Unilever Indonesia', pic: 'Bpk. Adrian (021) 8082-7000', date: '2026-09-04', eta: '2026-09-08', itemsCount: 3, totalQty: '25 Dus (3 SKU)', totalAmount: 7500000, status: 'Draf', destination: 'Gudang Utama - Toko Berkah Jaya', paymentTerm: 'Tempo 30 Hari', notes: 'Draf pesanan bulanan.' }
+    { id: 'PO-2026-0901', supplier: 'PT Indofood Sukses Makmur', pic: 'Bpk. Haryanto (021) 522-8800', date: '2026-09-02', arrivalDate: null, itemsCount: 3, totalQty: '45 Dus', totalAmount: 12850000, status: 'Menunggu Verifikasi Gudang', destination: 'Gudang Utama - Toko Berkah Jaya', paymentTerm: 'Tempo 30 Hari (Net 30)', notes: 'Harap sertakan faktur pajak dan surat jalan resmi bermaterai.' },
+    { id: 'PO-2026-0902', supplier: 'PT Mayora Indah Tbk', pic: 'Ibu Rina Melati (021) 565-3321', date: '2026-09-03', arrivalDate: null, itemsCount: 2, totalQty: '30 Dus', totalAmount: 8400000, status: 'Menunggu Verifikasi Gudang', destination: 'Gudang Utama - Toko Berkah Jaya', paymentTerm: 'Tempo 14 Hari', notes: 'Kirim pagi sebelum pukul 11:00 WIB.' },
+    { id: 'PO-2026-0899', supplier: 'CV Sumber Berkah Sembako', pic: 'H. Sudirman (0812-3456-7890)', date: '2026-08-28', arrivalDate: '2026-08-30', itemsCount: 4, totalQty: '120 Sak', totalAmount: 18250000, status: 'Selesai Verifikasi', destination: 'Gudang Utama - Toko Berkah Jaya', paymentTerm: 'COD / Tunai', notes: 'Verifikasi fisik telah lengkap.' },
+    { id: 'PO-2026-0895', supplier: 'PT Wings Surya', pic: 'Bpk. Gunawan (031) 843-2211', date: '2026-08-25', arrivalDate: '2026-08-28', itemsCount: 5, totalQty: '80 Karton', totalAmount: 9000000, status: 'Selesai Verifikasi', destination: 'Gudang Utama - Toko Berkah Jaya', paymentTerm: 'Tempo 30 Hari', notes: 'Semua barang diterima dalam kondisi baik.' },
+    { id: 'PO-2026-0903', supplier: 'PT Unilever Indonesia', pic: 'Bpk. Adrian (021) 8082-7000', date: '2026-09-04', arrivalDate: null, itemsCount: 3, totalQty: '25 Dus', totalAmount: 7500000, status: 'Draf', destination: 'Gudang Utama - Toko Berkah Jaya', paymentTerm: 'Tempo 30 Hari', notes: 'Draf pesanan bulanan.' }
   ],
 
   defaultReturns: [
@@ -741,7 +741,28 @@ window.PosStore = {
       this.savePOs(this.defaultPOs);
       return [...this.defaultPOs];
     }
-    try { return JSON.parse(raw); } catch (e) { return [...this.defaultPOs]; }
+    try {
+      let orders = JSON.parse(raw);
+      let changed = false;
+      orders = orders.map(po => {
+        let updated = { ...po };
+        if (updated.arrivalDate === undefined) {
+          if (updated.status === 'Selesai Verifikasi' || updated.status === 'Selesai') {
+            updated.arrivalDate = updated.eta || updated.date || '2026-08-30';
+          } else {
+            updated.arrivalDate = null;
+          }
+          changed = true;
+        }
+        if (updated.totalQty && updated.totalQty.includes('SKU')) {
+          updated.totalQty = updated.totalQty.replace(/\s*\(\d+\s*SKU\)/gi, '');
+          changed = true;
+        }
+        return updated;
+      });
+      if (changed) this.savePOs(orders);
+      return orders;
+    } catch (e) { return [...this.defaultPOs]; }
   },
   savePOs(list) {
     localStorage.setItem('pos_orders', JSON.stringify(list));
@@ -755,6 +776,16 @@ window.PosStore = {
   updatePOStatus(id, status) {
     let list = this.getPOs();
     list = list.map(p => p.id === id ? { ...p, status } : p);
+    this.savePOs(list);
+    return list;
+  },
+  verifyPOArrival(id, arrivalDate) {
+    let list = this.getPOs();
+    list = list.map(p => p.id === id ? { 
+      ...p, 
+      status: 'Selesai Verifikasi', 
+      arrivalDate: arrivalDate || new Date().toISOString().split('T')[0] 
+    } : p);
     this.savePOs(list);
     return list;
   },

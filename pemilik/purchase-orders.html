@@ -1507,7 +1507,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 <th>No. PO</th>
                 <th>Supplier</th>
                 <th>Tanggal Pesan</th>
-                <th>Estimasi</th>
+                <th>Tanggal Tiba</th>
                 <th class="th-number">Jumlah Item</th>
                 <th class="th-number">Total Nilai PO</th>
                 <th>Status</th>
@@ -1536,10 +1536,18 @@ html.sidebar-collapsed .sidebar .user-snippet {
         </button>
       </div>
       <div class="modal-body">
-        <div class="form-grid mb-4">
+        <div class="form-grid mb-4" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
           <div>
             <span class="text-muted" style="font-size: var(--text-xs);">Supplier / Vendor:</span>
             <div class="font-semibold" id="poModalSupplier">-</div>
+          </div>
+          <div>
+            <span class="text-muted" style="font-size: var(--text-xs);">Tanggal Pemesanan:</span>
+            <div class="font-medium" id="poModalDate">-</div>
+          </div>
+          <div>
+            <span class="text-muted" style="font-size: var(--text-xs);">Tanggal Tiba (Gudang):</span>
+            <div id="poModalArrivalDate">-</div>
           </div>
           <div>
             <span class="text-muted" style="font-size: var(--text-xs);">Lokasi Pengiriman:</span>
@@ -1550,7 +1558,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
             <div class="font-semibold" id="poModalTerm">Tempo 30 Hari (Net 30)</div>
           </div>
           <div>
-            <span class="text-muted" style="font-size: var(--text-xs);">Status:</span>
+            <span class="text-muted" style="font-size: var(--text-xs);">Status Dokumen:</span>
             <div id="poModalStatusBadge"><span class="badge badge-black">MENUNGGU VERIFIKASI GUDANG</span></div>
           </div>
         </div>
@@ -1663,7 +1671,9 @@ html.sidebar-collapsed .sidebar .user-snippet {
             <div class="text-muted" style="font-size: var(--text-xs);">${po.pic || '-'}</div>
           </td>
           <td class="td-muted">${po.date || '-'}</td>
-          <td class="font-medium">${po.eta || '-'}</td>
+          <td>
+            ${po.arrivalDate ? `<span class="font-medium font-mono">${po.arrivalDate}</span>` : `<span class="badge badge-outline" style="border-style: dashed; font-size: 11px; color: var(--text-muted);">Belum Diverifikasi</span>`}
+          </td>
           <td class="td-number font-semibold">${po.totalQty || `${po.itemsCount || 1} Item`}</td>
           <td class="td-number font-mono font-bold">${window.PosStore.formatRupiah(po.totalAmount)}</td>
           <td>${statusBadge}</td>
@@ -1718,6 +1728,10 @@ html.sidebar-collapsed .sidebar .user-snippet {
 
       document.getElementById('poModalNo').textContent = po.id;
       document.getElementById('poModalSupplier').textContent = po.supplier;
+      document.getElementById('poModalDate').textContent = po.date || '-';
+      document.getElementById('poModalArrivalDate').innerHTML = po.arrivalDate 
+        ? `<span class="font-semibold font-mono">${po.arrivalDate}</span>` 
+        : `<span class="badge badge-outline" style="border-style: dashed; font-size: 11px; color: var(--text-muted);">Belum Diverifikasi Gudang</span>`;
       document.getElementById('poModalDest').textContent = po.destination || 'Gudang Utama - Toko Berkah Jaya';
       document.getElementById('poModalTerm').textContent = po.paymentTerm || 'Tempo 30 Hari';
       document.getElementById('poModalNotes').textContent = po.notes || '-';

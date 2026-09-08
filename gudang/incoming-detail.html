@@ -1327,19 +1327,23 @@ html.sidebar-collapsed .sidebar .user-snippet {
               </div>
               <div>
                 <div class="text-muted" style="font-size: var(--text-xs);">Petugas Penerima Gudang:</div>
-                <div class="font-semibold">Agus Prasetyo (Staf Gudang)</div>
-                <div class="text-muted" style="font-size: var(--text-xs);">Waktu Tiba: 04/09/2026 09:30 WIB</div>
+                <div class="font-semibold" style="font-size: var(--text-base);">Agus Prasetyo (Staf Gudang)</div>
+                <div class="text-muted" style="font-size: var(--text-xs);">Lokasi: Gudang Utama (Zona Inbound)</div>
               </div>
             </div>
 
-            <div class="form-grid" style="grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border-subtle); padding-top: 14px;">
+            <div class="form-grid" style="grid-template-columns: 200px 1fr 1.2fr; border-top: 1px solid var(--border-subtle); padding-top: 14px;">
               <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label">Nomor Surat Jalan</label>
-                <input type="text" class="form-input font-mono" value="SJ-IND-882910" placeholder="Nomor tercetak di surat jalan kurir...">
+                <label class="form-label">Tanggal Tiba di Gudang</label>
+                <input type="date" class="form-input font-medium" id="arrivalDateInput" value="2026-09-04" required>
               </div>
               <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label">Catatan Pengiriman / Identitas Sopir &amp; Plat Nomor</label>
-                <input type="text" class="form-input" value="B 9281 UXT (Sopir: Pak Bambang) - Segel kontainer aman utuh" placeholder="Nama sopir, nopol kendaraan, kondisi segel...">
+                <label class="form-label">Nomor Surat Jalan</label>
+                <input type="text" class="form-input font-mono" id="deliveryNoteInput" value="SJ-IND-882910" placeholder="Nomor tercetak di surat jalan kurir...">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Catatan Pengiriman / Identitas Sopir &amp; Plat</label>
+                <input type="text" class="form-input" id="deliveryNotesInput" value="B 9281 UXT (Sopir: Pak Bambang) - Segel kontainer aman utuh" placeholder="Nama sopir, nopol kendaraan, kondisi segel...">
               </div>
             </div>
           </div>
@@ -1355,7 +1359,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
             <table class="table">
               <thead>
                 <tr>
-                  <th>Nama Barang &amp; SKU</th>
+                  <th>Nama Barang</th>
                   <th class="th-number">Qty Dipesan</th>
                   <th class="th-number" style="width: 100px;">Qty Diterima</th>
                   <th style="width: 140px;">Tgl Kedaluwarsa</th>
@@ -1369,7 +1373,6 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 <tr>
                   <td>
                     <div class="font-semibold">Beras Premium Ramos 5kg</div>
-                    <div class="font-mono td-muted">SKU-8991001</div>
                   </td>
                   <td class="td-number font-semibold">20 Sak</td>
                   <td class="td-number">
@@ -1395,7 +1398,6 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 <tr>
                   <td>
                     <div class="font-semibold">Minyak Goreng Refill 2L</div>
-                    <div class="font-mono td-muted">SKU-8991002</div>
                   </td>
                   <td class="td-number font-semibold">15 Dus</td>
                   <td class="td-number">
@@ -1421,7 +1423,6 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 <tr>
                   <td>
                     <div class="font-semibold">Gula Pasir Kristal Putih 1kg</div>
-                    <div class="font-mono td-muted">SKU-8991003</div>
                   </td>
                   <td class="td-number font-semibold">10 Dus</td>
                   <td class="td-number">
@@ -1455,7 +1456,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
               <a href="incoming.html" class="btn btn-secondary btn-sm">Batal</a>
-              <button class="btn btn-primary btn-sm" onclick="alert('Penerimaan disimpan. Stok gudang dan tanggal kedaluwarsa berhasil diperbarui!')">Simpan &amp; Update Stok</button>
+              <button class="btn btn-primary btn-sm" onclick="saveVerification()">Simpan &amp; Update Stok</button>
             </div>
           </div>
         </div>
@@ -1464,5 +1465,19 @@ html.sidebar-collapsed .sidebar .user-snippet {
   </div>
 
   <script src="../js/main.js"></script>
+  <script>
+    function saveVerification() {
+      const arrivalDate = document.getElementById('arrivalDateInput').value;
+      if (!arrivalDate) {
+        alert('Harap pilih tanggal tiba barang terlebih dahulu.');
+        return;
+      }
+      if (window.PosStore) {
+        window.PosStore.verifyPOArrival('PO-2026-0901', arrivalDate);
+      }
+      alert('Penerimaan PO-2026-0901 berhasil diverifikasi pada tanggal tiba: ' + arrivalDate + '. Status PO diperbarui menjadi SELESAI VERIFIKASI.');
+      window.location.href = 'incoming.html';
+    }
+  </script>
 </body>
 </html>
