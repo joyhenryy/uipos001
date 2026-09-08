@@ -1456,20 +1456,20 @@ tr.is-active-row {
             <div class="card-body">
               <div class="form-grid mb-3">
                 <div class="form-group">
-                  <label class="form-label">Nomor Purchase Order</label>
-                  <input type="text" class="form-input font-mono" id="poNumberInput" value="PO-2026-0904" placeholder="Contoh: PO-2026-0904" required>
+                  <label class="form-label">Nomor Purchase Order <span style="color: var(--color-black);">*</span></label>
+                  <input type="text" class="form-input font-mono" id="poNumberInput" value="" placeholder="Contoh: PO-2026-0904" required>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Tanggal Pemesanan</label>
-                  <input type="date" class="form-input" id="poOrderDateInput" value="2026-09-06" required>
+                  <label class="form-label">Tanggal Pemesanan <span style="color: var(--color-black);">*</span></label>
+                  <input type="date" class="form-input" id="poOrderDateInput" value="" required>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Pilih Supplier Rekanan</label>
+                  <label class="form-label">Pilih Supplier Rekanan <span style="color: var(--color-black);">*</span></label>
                   <select class="form-select" id="supplierSelect" onchange="updateSupplierInfo()" required>
-                    <option value="">-- Pilih Vendor Distributor --</option>
-                    <option value="indofood" selected>PT Indofood Sukses Makmur (PIC: Bpk. Haryanto)</option>
+                    <option value="" disabled selected>-- Pilih Vendor Distributor --</option>
+                    <option value="indofood">PT Indofood Sukses Makmur (PIC: Bpk. Haryanto)</option>
                     <option value="mayora">PT Mayora Indah Tbk (PIC: Ibu Rina Melati)</option>
                     <option value="wings">PT Wings Surya (PIC: Bpk. Gunawan)</option>
                     <option value="berkah">CV Sumber Berkah Sembako (PIC: H. Sudirman)</option>
@@ -1489,8 +1489,8 @@ tr.is-active-row {
                 </div>
 
                 <div class="form-group" style="margin-bottom: 0;">
-                  <label class="form-label">Tujuan Penerimaan / Gudang</label>
-                  <input type="text" class="form-input" id="deliveryDestinationInput" value="Gudang Utama - Toko Berkah Jaya (Jl. Ahmad Yani No. 45)" placeholder="Lokasi gudang penerimaan barang" required>
+                  <label class="form-label">Tujuan Penerimaan / Gudang <span style="color: var(--color-black);">*</span></label>
+                  <input type="text" class="form-input" id="deliveryDestinationInput" value="" placeholder="Lokasi gudang penerimaan barang" required>
                 </div>
               </div>
 
@@ -1751,15 +1751,19 @@ tr.is-active-row {
     }
 
     function initDefaultRows() {
-      const products = window.PosStore.getProducts();
-      // Add initial 3 rows with defaults
-      const p1 = products[0] || { name: 'Beras Premium Ramos 5kg', sku: 'SKU-8991001', unit: 'Sak / Karung (5kg)', buyPrice: 65000 };
-      const p2 = products[1] || { name: 'Minyak Goreng Refill 2L', sku: 'SKU-8991002', unit: 'Pouch (2L)', buyPrice: 29500 };
-      const p3 = products[3] || { name: 'Susu UHT Cokelat 1L', sku: 'SKU-8992001', unit: 'Dus (40 pcs)', buyPrice: 16500 };
+      // Mulai dengan 1 baris kosong bersih tanpa produk bawaan
+      createRow(null, 1, 0);
 
-      createRow(p1, 20, p1.buyPrice || 65000);
-      createRow(p2, 25, p2.buyPrice || 29500);
-      createRow(p3, 15, p3.buyPrice || 16500);
+      // Inisialisasi nomor PO baru jika input kosong
+      const poNumEl = document.getElementById('poNumberInput');
+      if (poNumEl && !poNumEl.value) {
+        const rand = Math.floor(1000 + Math.random() * 9000);
+        poNumEl.value = `PO-2026-${rand}`;
+      }
+      const poDateEl = document.getElementById('poOrderDateInput');
+      if (poDateEl && !poDateEl.value) {
+        poDateEl.value = new Date().toISOString().split('T')[0];
+      }
     }
 
     function createRow(product = null, qty = 10, price = 0) {

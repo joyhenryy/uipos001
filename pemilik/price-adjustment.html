@@ -1460,9 +1460,10 @@
               <form
                 onsubmit="event.preventDefault(); alert('Perubahan harga berhasil disimpan dan langsung disinkronkan ke POS kasir serta log audit!'); window.location.href='price-history.html';">
                 <div class="form-group">
-                  <label class="form-label">Pilih Barang yang Disesuaikan</label>
+                  <label class="form-label">Pilih Barang yang Disesuaikan <span style="color: var(--color-black);">*</span></label>
                   <select class="form-select" id="selectProdAdjust" required onchange="handleProductPriceChange(this)">
-                    <option value="74000" selected>Beras Premium Ramos 5kg (SKU-8991001)</option>
+                    <option value="" disabled selected>-- Pilih Barang yang Disesuaikan --</option>
+                    <option value="74000">Beras Premium Ramos 5kg (SKU-8991001)</option>
                     <option value="34500">Minyak Goreng Refill 2L (SKU-8991002)</option>
                     <option value="17500">Gula Pasir Kristal Putih 1kg (SKU-8991003)</option>
                     <option value="19800">Susu UHT Cokelat 1L (SKU-8992001)</option>
@@ -1473,27 +1474,27 @@
                   <div class="form-group">
                     <label class="form-label">Harga Saat Ini (POS)</label>
                     <input type="text" id="currentPriceInput" class="form-input font-bold tabular-nums"
-                      value="Rp 74.000" readonly>
-                    <div class="form-hint">HPP Berjalan: Rp 64.250</div>
+                      placeholder="Pilih produk terlebih dahulu" value="" readonly>
+                    <div class="form-hint" id="hppHint">HPP Berjalan: -</div>
                   </div>
                   <div class="form-group">
-                    <label class="form-label">Harga Jual Baru (Rp)</label>
-                    <input type="number" id="newPriceInput" class="form-input font-bold tabular-nums" value="76000"
+                    <label class="form-label">Harga Jual Baru (Rp) <span style="color: var(--color-black);">*</span></label>
+                    <input type="number" id="newPriceInput" class="form-input font-bold tabular-nums" placeholder="contoh: 76000" value=""
                       required oninput="calculateMarginDiff()">
-                    <div class="form-hint" id="diffHint">Kenaikan: +Rp 2.000 (+2.70%)</div>
+                    <div class="form-hint" id="diffHint">Perubahan margin akan dihitung otomatis</div>
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Tanggal Mulai Berlaku Efektif</label>
-                  <input type="date" class="form-input" value="2026-09-05" required>
+                  <label class="form-label">Tanggal Mulai Berlaku Efektif <span style="color: var(--color-black);">*</span></label>
+                  <input type="date" class="form-input" id="effectiveDateInput" value="" required>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Alasan Penyesuaian Harga</label>
+                  <label class="form-label">Alasan Penyesuaian Harga <span style="color: var(--color-black);">*</span></label>
                   <textarea class="form-textarea" rows="3"
-                    placeholder="contoh: Penyesuaian harga faktur baru dari distributor penggilingan beras"
-                    required>Penyesuaian kenaikan harga faktur pembelian dari distributor penggilingan padi daerah per 01 September 2026.</textarea>
+                    placeholder="contoh: Penyesuaian kenaikan harga faktur pembelian dari distributor"
+                    required></textarea>
                 </div>
 
                 <div class="card-footer"
@@ -1525,6 +1526,15 @@
       const targetSku = urlParams.get('sku') || urlParams.get('id');
 
       select.innerHTML = '';
+      if (!targetSku) {
+        const defOpt = document.createElement('option');
+        defOpt.value = '';
+        defOpt.disabled = true;
+        defOpt.selected = true;
+        defOpt.textContent = '-- Pilih Barang yang Disesuaikan --';
+        select.appendChild(defOpt);
+      }
+
       products.forEach((p, idx) => {
         const opt = document.createElement('option');
         opt.value = p.sku;
@@ -1534,28 +1544,49 @@
         opt.setAttribute('data-name', p.name);
         const tag = p.status === 'Pending Pricing' ? ' [BARU - PENDING PRICING]' : '';
         opt.textContent = `${p.name} (${p.sku})${tag}`;
-        if (targetSku ? (p.sku === targetSku || p.id === targetSku) : idx === 0) {
+        if (targetSku && (p.sku === targetSku || p.id === targetSku)) {
           opt.selected = true;
         }
         select.appendChild(opt);
       });
 
-      handleProductPriceChange(select);
+      if (targetSku) {
+        handleProductPriceChange(select);
+        const dateInput = document.getElementById('effectiveDateInput');
+        if (dateInput && !dateInput.value) {
+          dateInput.value = new Date().toISOString().split('T')[0];
+        }
+      }
     }
 
     function handleProductPriceChange(el) {
       const opt = el.options[el.selectedIndex];
-      if (!opt) return;
+      if (!opt || !opt.value) {
+        document.getElementById('currentPriceInput').value = '';
+        document.getElementById('newPriceInput').value = '';
+        document.getElementById('diffHint').textContent = 'Perubahan margin akan dihitung otomatis';
+        document.getElementById('hppHint').textContent = 'HPP Berjalan: -';
+        return;
+      }
       const current = Number(opt.getAttribute('data-sell-price')) || 0;
       const buyPrice = Number(opt.getAttribute('data-buy-price')) || 0;
       const status = opt.getAttribute('data-status');
+
+      if (buyPrice) {
+        document.getElementById('hppHint').textContent = `HPP Berjalan: ${window.PosStore.formatRupiah(buyPrice)}`;
+      }
 
       if (status === 'Pending Pricing' || current === 0) {
         document.getElementById('currentPriceInput').value = 'Belum Diatur (Pending Pricing)';
         document.getElementById('newPriceInput').value = buyPrice ? Math.round(buyPrice * 1.15) : 10000;
       } else {
         document.getElementById('currentPriceInput').value = window.PosStore.formatRupiah(current);
-        document.getElementById('newPriceInput').value = current + 2000;
+        document.getElementById('newPriceInput').value = current;
+      }
+
+      const dateInput = document.getElementById('effectiveDateInput');
+      if (dateInput && !dateInput.value) {
+        dateInput.value = new Date().toISOString().split('T')[0];
       }
 
       calculateMarginDiff();

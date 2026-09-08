@@ -1334,16 +1334,16 @@ html.sidebar-collapsed .sidebar .user-snippet {
 
             <div class="form-grid" style="grid-template-columns: 200px 1fr 1.2fr; border-top: 1px solid var(--border-subtle); padding-top: 14px;">
               <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label">Tanggal Tiba di Gudang</label>
-                <input type="date" class="form-input font-medium" id="arrivalDateInput" value="2026-09-04" required>
+                <label class="form-label">Tanggal Tiba di Gudang <span style="color: var(--color-black);">*</span></label>
+                <input type="date" class="form-input font-medium" id="arrivalDateInput" value="" required>
               </div>
               <div class="form-group" style="margin-bottom: 0;">
                 <label class="form-label">Nomor Surat Jalan</label>
-                <input type="text" class="form-input font-mono" id="deliveryNoteInput" value="SJ-IND-882910" placeholder="Nomor tercetak di surat jalan kurir...">
+                <input type="text" class="form-input font-mono" id="deliveryNoteInput" value="" placeholder="Nomor tercetak di surat jalan kurir...">
               </div>
               <div class="form-group" style="margin-bottom: 0;">
                 <label class="form-label">Catatan Pengiriman / Identitas Sopir &amp; Plat</label>
-                <input type="text" class="form-input" id="deliveryNotesInput" value="B 9281 UXT (Sopir: Pak Bambang) - Segel kontainer aman utuh" placeholder="Nama sopir, nopol kendaraan, kondisi segel...">
+                <input type="text" class="form-input" id="deliveryNotesInput" value="" placeholder="Nama sopir, nopol kendaraan, kondisi segel...">
               </div>
             </div>
           </div>
@@ -1466,6 +1466,13 @@ html.sidebar-collapsed .sidebar .user-snippet {
 
   <script src="../js/main.js"></script>
   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateEl = document.getElementById('arrivalDateInput');
+      if (dateEl && !dateEl.value) {
+        dateEl.value = new Date().toISOString().split('T')[0];
+      }
+    });
+
     function saveVerification() {
       const arrivalDate = document.getElementById('arrivalDateInput').value;
       if (!arrivalDate) {

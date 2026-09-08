@@ -1319,7 +1319,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
       <main class="page-container">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Tambah / Ubah Data Supplier Rekanan</h1>
+            <h1 class="page-title" id="supplierPageTitle">Tambah Data Supplier Rekanan</h1>
             <p class="page-subtitle">Informasi legalitas perusahaan vendor, PIC distributor resmi, dan kategori pasokan komoditas.</p>
           </div>
         </div>
@@ -1332,44 +1332,40 @@ html.sidebar-collapsed .sidebar .user-snippet {
             <div class="card-body">
               <form onsubmit="event.preventDefault(); alert('Data supplier rekanan berhasil disimpan!'); window.location.href='suppliers.html';">
                 <div class="form-group">
-                  <label class="form-label">Nama Perusahaan / Distributor</label>
-                  <input type="text" class="form-input" placeholder="contoh: PT Indofood Sukses Makmur" value="PT Indofood Sukses Makmur" required>
+                  <label class="form-label">Nama Perusahaan / Distributor <span style="color: var(--color-black);">*</span></label>
+                  <input type="text" class="form-input" id="supplierNameInput" placeholder="contoh: PT Indofood Sukses Makmur" value="" required>
                 </div>
 
                 <div class="form-grid-2">
                   <div class="form-group">
-                    <label class="form-label">Contact Person (PIC Sales / Logistik)</label>
-                    <input type="text" class="form-input" placeholder="contoh: Bpk. Haryanto" value="Bpk. Haryanto" required>
+                    <label class="form-label">Contact Person (PIC Sales / Logistik) <span style="color: var(--color-black);">*</span></label>
+                    <input type="text" class="form-input" id="supplierPicInput" placeholder="contoh: Bpk. Haryanto" value="" required>
                   </div>
                   <div class="form-group">
-                    <label class="form-label">Nomor Telepon Kantor / HP</label>
-                    <input type="text" class="form-input" placeholder="contoh: (021) 522-8800" value="(021) 522-8800" required>
+                    <label class="form-label">Nomor Telepon Kantor / HP <span style="color: var(--color-black);">*</span></label>
+                    <input type="text" class="form-input" id="supplierPhoneInput" placeholder="contoh: (021) 522-8800" value="" required>
                   </div>
                 </div>
 
                 <div class="form-grid-2">
                   <div class="form-group">
                     <label class="form-label">Alamat Email Korespondensi</label>
-                    <input type="email" class="form-input" placeholder="contoh: sales.order@indofood.co.id" value="sales.order@indofood.co.id">
+                    <input type="email" class="form-input" id="supplierEmailInput" placeholder="contoh: sales.order@indofood.co.id" value="">
                   </div>
                   <div class="form-group">
-                    <label class="form-label">Kategori Komoditas Pasokan</label>
-                    <input type="text" class="form-input" placeholder="contoh: Sembako, Mie Instan, Tepung" value="Sembako, Minyak Goreng, Bumbu" required>
+                    <label class="form-label">Kategori Komoditas Pasokan <span style="color: var(--color-black);">*</span></label>
+                    <input type="text" class="form-input" id="supplierCategoryInput" placeholder="contoh: Sembako, Minyak Goreng, Bumbu" value="" required>
                   </div>
                 </div>
 
                 <div class="form-group">
                   <label class="form-label">Alamat Kantor / Pergudangan Utama</label>
-                  <textarea class="form-textarea" rows="2" placeholder="Alamat lengkap distributor...">Sudirman Plaza, Indofood Tower Lt. 23, Jl. Jend. Sudirman Kav. 76-78, Jakarta Selatan</textarea>
+                  <textarea class="form-textarea" id="supplierAddressInput" rows="2" placeholder="Alamat lengkap distributor..."></textarea>
                 </div>
 
                 <div class="card-footer" style="padding: 16px 0 0 0; margin-top: 20px; background: transparent; border-top: 1px solid var(--border-subtle);">
-                          <a href="purchase-orders.html" class="nav-item">
-          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          <span>Purchase Order (PO)</span>
-        </a>
-        <a href="suppliers.html" class="btn btn-secondary">Batal</a>
-                  <button type="submit" class="btn btn-primary">Simpan Data Supplier</button>
+                  <a href="suppliers.html" class="btn btn-secondary">Batal</a>
+                  <button type="submit" class="btn btn-primary" id="btnSubmitSupplier">Simpan Data Supplier</button>
                 </div>
               </form>
             </div>
@@ -1380,5 +1376,44 @@ html.sidebar-collapsed .sidebar .user-snippet {
   </div>
 
   <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id') || urlParams.get('name');
+      if (id) {
+        document.getElementById('supplierPageTitle').textContent = 'Edit Data Supplier Rekanan';
+        document.getElementById('btnSubmitSupplier').textContent = 'Simpan Perubahan Supplier';
+        if (id.toLowerCase().includes('indofood') || id === 'SUP-001') {
+          document.getElementById('supplierNameInput').value = 'PT Indofood Sukses Makmur';
+          document.getElementById('supplierPicInput').value = 'Bpk. Haryanto';
+          document.getElementById('supplierPhoneInput').value = '(021) 522-8800';
+          document.getElementById('supplierEmailInput').value = 'sales.order@indofood.co.id';
+          document.getElementById('supplierCategoryInput').value = 'Sembako, Minyak Goreng, Bumbu';
+          document.getElementById('supplierAddressInput').value = 'Sudirman Plaza, Indofood Tower Lt. 23, Jl. Jend. Sudirman Kav. 76-78, Jakarta Selatan';
+        } else if (id.toLowerCase().includes('mayora') || id === 'SUP-002') {
+          document.getElementById('supplierNameInput').value = 'PT Mayora Indah Tbk';
+          document.getElementById('supplierPicInput').value = 'Ibu Rina Melati';
+          document.getElementById('supplierPhoneInput').value = '(021) 565-3321';
+          document.getElementById('supplierEmailInput').value = 'order.logistik@mayora.co.id';
+          document.getElementById('supplierCategoryInput').value = 'Biskuit, Makanan Ringan, Kopi';
+          document.getElementById('supplierAddressInput').value = 'Gedung Mayora Group, Jl. Tomang Raya No. 21-23, Jakarta Barat';
+        } else if (id.toLowerCase().includes('wings') || id === 'SUP-003') {
+          document.getElementById('supplierNameInput').value = 'PT Wings Surya';
+          document.getElementById('supplierPicInput').value = 'Bpk. Gunawan';
+          document.getElementById('supplierPhoneInput').value = '(031) 843-2211';
+          document.getElementById('supplierEmailInput').value = 'distribusi.jkt@wingscorp.com';
+          document.getElementById('supplierCategoryInput').value = 'Deterjen, Sabun, Perlengkapan Mandi';
+          document.getElementById('supplierAddressInput').value = 'Kawasan Industri Pulogadung, Jl. Tipar Cakung Kav. 5-7, Jakarta Timur';
+        } else if (id.toLowerCase().includes('berkah') || id === 'SUP-004') {
+          document.getElementById('supplierNameInput').value = 'CV Sumber Berkah Sembako';
+          document.getElementById('supplierPicInput').value = 'H. Sudirman';
+          document.getElementById('supplierPhoneInput').value = '0812-3456-7890';
+          document.getElementById('supplierEmailInput').value = 'sumberberkah.grosir@gmail.com';
+          document.getElementById('supplierCategoryInput').value = 'Beras Premium, Gula Pasir, Tepung';
+          document.getElementById('supplierAddressInput').value = 'Pasar Induk Beras Cipinang, Blok D No. 12-14, Jakarta Timur';
+        }
+      }
+    });
+  </script>
 </body>
 </html>

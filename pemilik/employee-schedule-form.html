@@ -1319,7 +1319,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
       <main class="page-container">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Tambah / Ubah Penugasan Shift Piket</h1>
+            <h1 class="page-title" id="schedulePageTitle">Tambah Penugasan Shift Piket</h1>
             <p class="page-subtitle">Setelah disimpan, sistem akan secara otomatis mengirimkan notifikasi jadwal ke akun staf terkait.</p>
           </div>
         </div>
@@ -1332,9 +1332,10 @@ html.sidebar-collapsed .sidebar .user-snippet {
             <div class="card-body">
               <form onsubmit="event.preventDefault(); alert('Jadwal piket berhasil disimpan dan notifikasi telah dikirim ke pegawai!'); window.location.href='employee-schedule.html';">
                 <div class="form-group">
-                  <label class="form-label">Pilih Pegawai</label>
-                  <select class="form-select" required>
-                    <option value="Siti Rahma" selected>Siti Rahma &bull; Kasir</option>
+                  <label class="form-label">Pilih Pegawai <span style="color: var(--color-black);">*</span></label>
+                  <select class="form-select" id="scheduleEmpSelect" required>
+                    <option value="" disabled selected>Pilih Pegawai</option>
+                    <option value="Siti Rahma">Siti Rahma &bull; Kasir</option>
                     <option value="Budi Santoso">Budi Santoso &bull; Kasir</option>
                     <option value="Agus Prasetyo">Agus Prasetyo &bull; Staf Gudang</option>
                     <option value="Bambang Irawan">Bambang Irawan &bull; Staf Gudang</option>
@@ -1342,40 +1343,41 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Tanggal Shift</label>
-                  <input type="date" class="form-input" value="2026-09-07" required>
+                  <label class="form-label">Tanggal Shift <span style="color: var(--color-black);">*</span></label>
+                  <input type="date" class="form-input" id="scheduleDateInput" value="" required>
                 </div>
 
                 <div class="form-grid-2">
                   <div class="form-group">
-                    <label class="form-label">Jam Mulai</label>
-                    <input type="time" class="form-input font-mono" value="07:00" required>
+                    <label class="form-label">Jam Mulai <span style="color: var(--color-black);">*</span></label>
+                    <input type="time" class="form-input font-mono" id="scheduleStartTimeInput" value="" required>
                   </div>
                   <div class="form-group">
-                    <label class="form-label">Jam Selesai</label>
-                    <input type="time" class="form-input font-mono" value="15:00" required>
+                    <label class="form-label">Jam Selesai <span style="color: var(--color-black);">*</span></label>
+                    <input type="time" class="form-input font-mono" id="scheduleEndTimeInput" value="" required>
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Nama Shift / Posisi Kerja</label>
-                  <select class="form-select">
-                    <option selected>Shift Pagi (Kasir Terminal 01)</option>
-                    <option>Shift Siang (Kasir Terminal 02)</option>
-                    <option>Shift Sore (Kasir Terminal 01)</option>
-                    <option>Shift Gudang (Docking &amp; Verifikasi Barang)</option>
-                    <option>Shift Khusus (Stock Opname)</option>
+                  <label class="form-label">Nama Shift / Posisi Kerja <span style="color: var(--color-black);">*</span></label>
+                  <select class="form-select" id="scheduleShiftSelect" required>
+                    <option value="" disabled selected>Pilih Nama Shift / Posisi Kerja</option>
+                    <option value="Shift Pagi (Kasir Terminal 01)">Shift Pagi (Kasir Terminal 01)</option>
+                    <option value="Shift Siang (Kasir Terminal 02)">Shift Siang (Kasir Terminal 02)</option>
+                    <option value="Shift Sore (Kasir Terminal 01)">Shift Sore (Kasir Terminal 01)</option>
+                    <option value="Shift Gudang (Docking &amp; Verifikasi Barang)">Shift Gudang (Docking &amp; Verifikasi Barang)</option>
+                    <option value="Shift Khusus (Stock Opname)">Shift Khusus (Stock Opname)</option>
                   </select>
                 </div>
 
                 <div class="form-group">
                   <label class="form-label">Catatan Tugas Khusus</label>
-                  <textarea class="form-textarea" rows="2" placeholder="contoh: Membantu rekap closing mingguan"></textarea>
+                  <textarea class="form-textarea" id="scheduleNotesInput" rows="2" placeholder="contoh: Membantu rekap closing mingguan"></textarea>
                 </div>
 
                 <div class="card-footer" style="padding: 16px 0 0 0; margin-top: 20px; background: transparent; border-top: 1px solid var(--border-subtle);">
                   <a href="employee-schedule.html" class="btn btn-secondary">Batal</a>
-                  <button type="submit" class="btn btn-primary">Simpan Jadwal Shift</button>
+                  <button type="submit" class="btn btn-primary" id="btnSubmitSchedule">Simpan Jadwal Shift</button>
                 </div>
               </form>
             </div>
@@ -1386,5 +1388,34 @@ html.sidebar-collapsed .sidebar .user-snippet {
   </div>
 
   <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id') || urlParams.get('emp');
+      if (id) {
+        document.getElementById('schedulePageTitle').textContent = 'Edit Penugasan Shift Piket';
+        document.getElementById('btnSubmitSchedule').textContent = 'Simpan Perubahan Jadwal';
+        if (id.toLowerCase().includes('siti')) {
+          document.getElementById('scheduleEmpSelect').value = 'Siti Rahma';
+          document.getElementById('scheduleDateInput').value = '2026-09-07';
+          document.getElementById('scheduleStartTimeInput').value = '07:00';
+          document.getElementById('scheduleEndTimeInput').value = '15:00';
+          document.getElementById('scheduleShiftSelect').value = 'Shift Pagi (Kasir Terminal 01)';
+        } else if (id.toLowerCase().includes('budi')) {
+          document.getElementById('scheduleEmpSelect').value = 'Budi Santoso';
+          document.getElementById('scheduleDateInput').value = '2026-09-07';
+          document.getElementById('scheduleStartTimeInput').value = '15:00';
+          document.getElementById('scheduleEndTimeInput').value = '22:00';
+          document.getElementById('scheduleShiftSelect').value = 'Shift Siang (Kasir Terminal 02)';
+        } else if (id.toLowerCase().includes('agus')) {
+          document.getElementById('scheduleEmpSelect').value = 'Agus Prasetyo';
+          document.getElementById('scheduleDateInput').value = '2026-09-07';
+          document.getElementById('scheduleStartTimeInput').value = '08:00';
+          document.getElementById('scheduleEndTimeInput').value = '16:00';
+          document.getElementById('scheduleShiftSelect').value = 'Shift Gudang (Docking & Verifikasi Barang)';
+        }
+      }
+    });
+  </script>
 </body>
 </html>

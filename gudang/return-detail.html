@@ -1487,8 +1487,9 @@ html.sidebar-collapsed .sidebar .user-snippet {
               </div>
               <div class="card-body" style="display: flex; flex-direction: column; gap: 14px; font-size: var(--text-sm);">
                 <div class="form-group" style="margin-bottom: 0;">
-                  <label class="form-label">Pilih Supplier <span>*</span></label>
-                  <select class="form-select" id="supplierSelect">
+                  <label class="form-label">Pilih Supplier <span style="color: var(--color-black);">*</span></label>
+                  <select class="form-select" id="supplierSelect" onchange="onSupplierChange()">
+                    <option value="" disabled selected>-- Pilih Supplier Distributor --</option>
                     <option value="PT Indofood Sukses Makmur">PT Indofood Sukses Makmur</option>
                     <option value="PT Mayora Indah Tbk">PT Mayora Indah Tbk</option>
                     <option value="CV Sumber Berkah Sembako">CV Sumber Berkah Sembako</option>
@@ -1499,13 +1500,14 @@ html.sidebar-collapsed .sidebar .user-snippet {
 
                 <div style="padding: 10px; background: var(--color-gray-50); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);">
                   <div class="text-muted" style="font-size: var(--text-xs); padding-bottom: 3px;">Contact Person:</div>
-                  <div class="font-semibold" id="supplierPicDisplay" style="font-size: 13px; padding-bottom: 2px;">Bpk. Haryanto</div>
-                  <div class="text-muted font-mono" id="supplierPhoneDisplay" style="font-size: 12px;">0812-1234-5678</div>
+                  <div class="font-semibold" id="supplierPicDisplay" style="font-size: 13px; padding-bottom: 2px;">-</div>
+                  <div class="text-muted font-mono" id="supplierPhoneDisplay" style="font-size: 12px;">-</div>
                 </div>
 
                 <div class="form-group" style="margin-bottom: 0;">
                   <label class="form-label">Referensi No. PO Terkait (Opsional)</label>
                   <select class="form-select" id="poRefSelect">
+                    <option value="" selected>-- Pilih No. PO Terkait (Opsional) --</option>
                     <option value="PO-2026-0901">PO-2026-0901 (PT Indofood Sukses Makmur)</option>
                     <option value="PO-2026-0902">PO-2026-0902 (PT Mayora Indah Tbk)</option>
                     <option value="PO-2026-0899">PO-2026-0899 (CV Sumber Berkah Sembako)</option>
@@ -1516,8 +1518,8 @@ html.sidebar-collapsed .sidebar .user-snippet {
                 </div>
 
                 <div class="form-group" style="margin-bottom: 0;">
-                  <label class="form-label">Tanggal Pengajuan Retur</label>
-                  <input type="date" class="form-input" id="returnDateInput" value="2026-09-04">
+                  <label class="form-label">Tanggal Pengajuan Retur <span style="color: var(--color-black);">*</span></label>
+                  <input type="date" class="form-input" id="returnDateInput" value="">
                 </div>
               </div>
             </div>
@@ -1736,10 +1738,10 @@ html.sidebar-collapsed .sidebar .user-snippet {
       const id = customId || `RET-2026-${randomNum}`;
       return {
         id,
-        supplier: 'PT Indofood Sukses Makmur',
-        pic: 'Bpk. Haryanto (Logistik Distributor)',
-        phone: '(021) 522-8800 ext. 201',
-        poRef: 'PO-2026-0901',
+        supplier: '',
+        pic: '-',
+        phone: '-',
+        poRef: '',
         date: today,
         status: 'Diajukan',
         settlement: 'Penggantian Barang Fisik Baru',
@@ -1758,11 +1760,19 @@ html.sidebar-collapsed .sidebar .user-snippet {
 
     function populateFormFromDoc(doc) {
       document.getElementById('docIdDisplay').textContent = doc.id;
-      document.getElementById('supplierSelect').value = doc.supplier || 'PT Indofood Sukses Makmur';
-      onSupplierChange();
+      if (doc.supplier) {
+        document.getElementById('supplierSelect').value = doc.supplier;
+        onSupplierChange();
+      } else {
+        document.getElementById('supplierSelect').value = '';
+        document.getElementById('supplierPicDisplay').textContent = '-';
+        document.getElementById('supplierPhoneDisplay').textContent = '-';
+      }
 
       if (doc.poRef) {
         document.getElementById('poRefSelect').value = doc.poRef;
+      } else {
+        document.getElementById('poRefSelect').value = '';
       }
       if (doc.date) {
         document.getElementById('returnDateInput').value = doc.date;
@@ -1775,22 +1785,6 @@ html.sidebar-collapsed .sidebar .user-snippet {
       }
 
       returnItems = (doc.items && doc.items.length > 0) ? [...doc.items] : [];
-      if (returnItems.length === 0) {
-        // If empty, add 1 default row from catalog
-        const prods = window.PosStore ? window.PosStore.getProducts() : [];
-        if (prods.length > 0) {
-          const p = prods[1] || prods[0];
-          returnItems.push({
-            sku: p.sku || '',
-            name: p.name,
-            qty: 1,
-            unit: p.unit || 'Pcs',
-            reason: 'Kemasan Bocor / Rusak',
-            buyPrice: p.buyPrice || 25000,
-            subtotal: p.buyPrice || 25000
-          });
-        }
-      }
 
       renderItemsTable();
       renderTimeline(doc.status || 'Diajukan');

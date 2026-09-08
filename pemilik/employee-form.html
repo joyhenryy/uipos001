@@ -1319,7 +1319,7 @@ html.sidebar-collapsed .sidebar .user-snippet {
       <main class="page-container">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Tambah / Ubah Data Pegawai</h1>
+            <h1 class="page-title" id="employeePageTitle">Tambah Data Pegawai</h1>
             <p class="page-subtitle">Pemilik bertanggung jawab mengatur kredensial awal, role, dan hak operasional akun pegawai.</p>
           </div>
         </div>
@@ -1333,33 +1333,34 @@ html.sidebar-collapsed .sidebar .user-snippet {
               <form onsubmit="event.preventDefault(); alert('Data pegawai berhasil disimpan!'); window.location.href='employees.html';">
                 <div class="form-grid-2">
                   <div class="form-group">
-                    <label class="form-label">Nama Lengkap Pegawai</label>
-                    <input type="text" class="form-input" placeholder="contoh: Siti Rahma" value="Siti Rahma" required>
+                    <label class="form-label">Nama Lengkap Pegawai <span style="color: var(--color-black);">*</span></label>
+                    <input type="text" class="form-input" id="empNameInput" placeholder="contoh: Siti Rahma" value="" required>
                   </div>
                   <div class="form-group">
-                    <label class="form-label">Nomor Kontak / Telepon</label>
-                    <input type="text" class="form-input" placeholder="contoh: +62 812-3456-7890" value="+62 812-3456-7890" required>
+                    <label class="form-label">Nomor Kontak / Telepon <span style="color: var(--color-black);">*</span></label>
+                    <input type="text" class="form-input" id="empPhoneInput" placeholder="contoh: +62 812-3456-7890" value="" required>
                   </div>
                 </div>
 
                 <div class="form-group">
                   <label class="form-label">Alamat Domisili</label>
-                  <textarea class="form-textarea" rows="2" placeholder="Alamat tempat tinggal lengkap...">Jl. Tebet Timur Dalam No. 14, Jakarta Selatan</textarea>
+                  <textarea class="form-textarea" id="empAddressInput" rows="2" placeholder="Alamat tempat tinggal lengkap..."></textarea>
                 </div>
 
                 <div class="form-grid-2">
                   <div class="form-group">
-                    <label class="form-label">Role Akses Sistem</label>
-                    <select class="form-select" required>
-                      <option value="Kasir" selected>Kasir (Akses POS &amp; Jadwal Kasir)</option>
+                    <label class="form-label">Role Akses Sistem <span style="color: var(--color-black);">*</span></label>
+                    <select class="form-select" id="empRoleSelect" required>
+                      <option value="" disabled selected>Pilih Role Akses Sistem</option>
+                      <option value="Kasir">Kasir (Akses POS &amp; Jadwal Kasir)</option>
                       <option value="Gudang">Gudang (Akses Manajemen Stok &amp; Barang Masuk)</option>
                     </select>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Status Akun</label>
-                    <select class="form-select">
-                      <option selected>Aktif (Bisa Login)</option>
-                      <option>Nonaktif (Ditangguhkan)</option>
+                    <select class="form-select" id="empStatusSelect">
+                      <option value="Aktif" selected>Aktif (Bisa Login)</option>
+                      <option value="Nonaktif">Nonaktif (Ditangguhkan)</option>
                     </select>
                   </div>
                 </div>
@@ -1370,19 +1371,19 @@ html.sidebar-collapsed .sidebar .user-snippet {
 
                 <div class="form-grid-2">
                   <div class="form-group">
-                    <label class="form-label">Username</label>
-                    <input type="text" class="form-input font-mono" placeholder="contoh: kasir.siti" value="kasir.siti" required>
+                    <label class="form-label">Username <span style="color: var(--color-black);">*</span></label>
+                    <input type="text" class="form-input font-mono" id="empUsernameInput" placeholder="contoh: kasir.siti" value="" required>
                   </div>
                   <div class="form-group">
-                    <label class="form-label">Password Awal</label>
-                    <input type="password" class="form-input font-mono" placeholder="Masukkan password awal" value="password123" required>
+                    <label class="form-label">Password Awal <span style="color: var(--color-black);">*</span></label>
+                    <input type="password" class="form-input font-mono" id="empPasswordInput" placeholder="Masukkan password awal" value="" required>
                     <div class="form-hint">Password awal dapat direset sewaktu-waktu oleh Pemilik.</div>
                   </div>
                 </div>
 
                 <div class="card-footer" style="padding: 16px 0 0 0; margin-top: 20px; background: transparent; border-top: 1px solid var(--border-subtle);">
                   <a href="employees.html" class="btn btn-secondary">Batal</a>
-                  <button type="submit" class="btn btn-primary">Simpan Data Pegawai</button>
+                  <button type="submit" class="btn btn-primary" id="btnSubmitEmp">Simpan Data Pegawai</button>
                 </div>
               </form>
             </div>
@@ -1393,5 +1394,45 @@ html.sidebar-collapsed .sidebar .user-snippet {
   </div>
 
   <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id') || urlParams.get('name');
+      if (id) {
+        document.getElementById('employeePageTitle').textContent = 'Edit Data Pegawai';
+        document.getElementById('btnSubmitEmp').textContent = 'Simpan Perubahan Pegawai';
+        // Sample populate for edit mode if specific employee is requested
+        if (id.toLowerCase().includes('siti') || id === 'EMP-001') {
+          document.getElementById('empNameInput').value = 'Siti Rahma';
+          document.getElementById('empPhoneInput').value = '+62 812-3456-7890';
+          document.getElementById('empAddressInput').value = 'Jl. Tebet Timur Dalam No. 14, Jakarta Selatan';
+          document.getElementById('empRoleSelect').value = 'Kasir';
+          document.getElementById('empUsernameInput').value = 'kasir.siti';
+          document.getElementById('empPasswordInput').value = '••••••••';
+        } else if (id.toLowerCase().includes('budi') || id === 'EMP-002') {
+          document.getElementById('empNameInput').value = 'Budi Santoso';
+          document.getElementById('empPhoneInput').value = '+62 813-9876-5432';
+          document.getElementById('empAddressInput').value = 'Jl. Otista Raya No. 88, Jakarta Timur';
+          document.getElementById('empRoleSelect').value = 'Kasir';
+          document.getElementById('empUsernameInput').value = 'kasir.budi';
+          document.getElementById('empPasswordInput').value = '••••••••';
+        } else if (id.toLowerCase().includes('agus') || id === 'EMP-003') {
+          document.getElementById('empNameInput').value = 'Agus Prasetyo';
+          document.getElementById('empPhoneInput').value = '+62 813-8899-2211';
+          document.getElementById('empAddressInput').value = 'Jl. Cipinang Muara No. 25, Jakarta Timur';
+          document.getElementById('empRoleSelect').value = 'Gudang';
+          document.getElementById('empUsernameInput').value = 'agus.gudang';
+          document.getElementById('empPasswordInput').value = '••••••••';
+        } else if (id.toLowerCase().includes('bambang') || id === 'EMP-004') {
+          document.getElementById('empNameInput').value = 'Bambang Irawan';
+          document.getElementById('empPhoneInput').value = '+62 812-4455-6677';
+          document.getElementById('empAddressInput').value = 'Jl. Matraman Raya No. 12, Jakarta Timur';
+          document.getElementById('empRoleSelect').value = 'Gudang';
+          document.getElementById('empUsernameInput').value = 'bambang.gudang';
+          document.getElementById('empPasswordInput').value = '••••••••';
+        }
+      }
+    });
+  </script>
 </body>
 </html>
